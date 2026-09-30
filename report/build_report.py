@@ -204,14 +204,33 @@ TEMPLATE = """<!doctype html>
 <div class=card><h4>任务</h4><p>只做静态图。输入一段文字，交三样东西：最终 PNG、生成它的代码、一条能从头重跑的命令。可交互场景和 3D 建模已有不少 benchmark，不在范围内。</p></div>
 <div class=card><h4>赛道</h4><ul><li><b>主赛道</b>：只给文字。不联网，不读现成图片、素材和模型。</li><li><b>素材赛道</b>：可以用授权的照片、贴图、HDRI、3D 模型。</li><li><b>辅助赛道</b>：给一张参考图，用代码画出来，按像素相似度客观打分，适合当 RL 奖励（千里江山图属于这类）。</li></ul><p>所有赛道都禁止调用生图模型。</p></div>
 <div class=card><h4>预算档</h4><p>单轮（写完不看图）、6 轮、不限轮三档分别报分，每档都记 token、时间和轮数。单轮分数衡量模型本身；它和多轮之间的差距，就是后训练能把 harness 能力搬进权重的空间。</p></div>
-<div class=card><h4>评测三层</h4><ul><li><b>程序化规则，当门槛</b>：能渲染、输出路径和尺寸对、没有嵌入位图、没联网、没调模型、代码能重跑出同一张图、题目里可检查的约束（数量、文字、颜色、位置）满足。任何一条不过，总分归零，judge 分再高也不算。</li><li><b>VLM 裁判</b>：按细则逐张打分，再和固定图池两两比较，比较顺序做位置平衡，抵消 judge 偏爱某个位置的问题。grader 还会读代码：抓出把像素数组硬编码进代码这类作弊，也给可改、参数化这些代码自带的优势打分（次要维度）。</li><li><b>人工校准</b>：每个题目类别公布 VLM 裁判和人工的一致率；同一张图判几次结果不稳的维度，不交给裁判。</li></ul></div>
-<div class=card><h4>题目</h4><p>风景、街景、动物、人物、静物、多物体、指定画风（水墨、像素、动画背景等），外加一组"代码该赢"的题：精确数量、画面里的文字、几何布局、对已有图的精确修改。</p></div>
+<div class=card><h4>评测三层</h4><ul><li><b>程序化规则，当门槛</b>：能渲染、输出路径和尺寸对、没有嵌入位图、没联网、没调模型、代码能重跑出同一张图、题目里可检查的约束（数量、文字、颜色、位置）满足。任何一条不过，总分归零，judge 分再高也不算。</li><li><b>VLM 裁判</b>：细则写成能核对的具体说法（"正好 3 只猫""月亮在右上角"），逐条判是或否，不打 1–5 分；再和固定图池两两比较，隐去作者，比较顺序做位置平衡，抵消 judge 偏爱某个位置的问题。grader 还会读代码：抓出把像素数组硬编码进代码这类作弊，也给可改、参数化这些代码自带的优势打分（次要维度）。</li><li><b>人工校准</b>：上线前先人工读一批打过分的样本，确认 judge 判得对；每个题目类别公布 VLM 裁判和人工的一致率；同一张图判几次结果不稳的维度，不交给裁判。</li></ul></div>
+<div class=card><h4>题目</h4><p>风景、街景、动物、人物、静物、多物体、指定画风（水墨、像素、动画背景等），外加一组"代码该赢"的题：精确数量、画面里的文字、几何布局、对已有图的精确修改。</p><p>来源优先用人们真实让 coding agent 画图的 prompt，其次人写，再次以真实 prompt 为锚的合成题。难度由人判定，不专挑当前模型做不好的题；所有模型都失败的题人工复查。</p></div>
 <div class=card><h4>数据和环境格式</h4><p>每条任务一行：<code>prompt</code>、<code>reward_model</code>（怎么判分）、<code>extra_info</code>（任务 id、Docker 镜像）。渲染环境（Chrome、Blender、Node、Python）做成统一镜像，可以直接接进 verl 这类训练框架。数据分三份，共用同一套环境代码：<b>train</b> 公开、量大，可自动出题、自动生成细则；<b>dev</b> 公开、细则经人工核对，用来报分；<b>test</b> 不公开、细则由人写、定期更换，不进训练。</p></div>
 <div class=card><h4>训练 reward 和 benchmark 分数分开算</h4><p>训练时同一题跑一组（比如 8 个）rollout，组内互相比较给相对分，适合 GRPO。benchmark 不能只和自己比：和固定图池两两比较，图池里有生图模型的同题图和参考 agent 的图，最后给胜率或 Elo，回答"和生图模型比怎么样"。</p></div>
 <div class=card><h4>防刷分</h4><p>提前堵上这类手法：base64 塞位图、下载图片、安装或调用生图模型、加载预训练权重、在画面里写字骗 judge 或写 prompt injection。沙盒断网，静态扫描加运行时检查，judge 只看像素，另出一批对抗样本测 judge。确认作弊的 reward 归零。</p></div>
+<div class=card><h4>评测本身先过检查</h4><ul><li>分数随模型能力和 effort 上升；</li><li>最强模型开最高 effort 也离满分很远（试跑的 CLIP 认对率第一轮就 12/12，是反例）；</li><li>多次运行的噪声小于要关心的差距，报分附置信区间；</li><li>judge 判两次结论稳定；</li><li>对抗样本得 0 分。</li></ul><p>dev 分数涨而 test 不动，视为过拟合。</p></div>
 <div class=card><h4>效率也是指标</h4><p>每个预算档都报 token、轮数和时间。同样质量下用得更少，本身就是后训练要优化的目标。</p></div>
 </div>
-<p class=note style="margin-top:14px">还没定：题库规模、VLM 裁判选型、生图模型基线用哪几个、渲染镜像的具体内容。环境打包、组内比较评分和门槛式奖励参考了小米 <a href="https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss" target=_blank rel=noopener>MiMo-V2.6 开源的 RL 环境</a>和 <a href="https://arxiv.org/abs/2609.32577" target=_blank rel=noopener>GAGAR</a>；人工校准是它们没做的部分。</p>
+<p class=note style="margin-top:14px">还没定：题库规模、VLM 裁判选型、生图模型基线用哪几个、渲染镜像的具体内容。环境打包、组内比较评分和门槛式奖励参考了小米 <a href="https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss" target=_blank rel=noopener>MiMo-V2.6 开源的 RL 环境</a>和 <a href="https://arxiv.org/abs/2609.32577" target=_blank rel=noopener>GAGAR</a>；人工校准是它们没做的部分。评测自检、题目来源和细则格式参考了 <a href="https://claude.dev/blog/automating-eval-design-and-hillclimbing/" target=_blank rel=noopener>Automating eval design and hillclimbing</a>。</p>
+</section>
+
+
+<section class=block>
+<h2>实现方案</h2>
+<p>完整方案（任务和输出约定、题库规模、评分细节、数据格式示例、还没定的问题）见 <a href="{gh}docs/PLAN.md" target=_blank rel=noopener>docs/PLAN.md</a>。</p>
+<div class=tablewrap><table><thead><tr><th>阶段</th><th>做什么</th><th>完成标准</th></tr></thead><tbody>
+<tr><td>0</td><td>试跑（已完成）</td><td>24 张图、结论和局限都在本报告里</td></tr>
+<tr><td>1</td><td>环境和 harness：统一 Docker 镜像（Python、Node + Three.js、headless Chromium、Blender、SVG 渲染器，默认断网）；最小 agent 循环（bash、写文件、渲染、看图）并能接现成 agent；预算档强制执行；日志</td><td>试跑的 12 题在镜像里跑通三个预算档</td></tr>
+<tr><td>2</td><td>门槛：输出路径校验、断网重跑比对、静态扫描、运行时检查、程序化约束</td><td>对抗样本全部判 0；试跑里正常的图全部通过</td></tr>
+<tr><td>3</td><td>题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题</td><td>每题有来源、类别和人判的难度</td></tr>
+<tr><td>4</td><td>VLM 裁判：逐条细则；图池两两比较（位置平衡、Elo）；读代码的 grader</td><td>judge 两次判定不一致的比例低于 5%</td></tr>
+<tr><td>5</td><td>生图模型基线：2–3 个生图模型画 dev 全部题，放进图池</td><td>图池覆盖 dev 全部题</td></tr>
+<tr><td>6</td><td>验证评测：3 个模型 × 2 个 effort × 3 个种子；人工读 50 个样本；人工两两比较</td><td>评测自检全部通过</td></tr>
+<tr><td>7</td><td>训练环境：自动出题、自动生成细则得到 train 集；组内比较 reward；导出 Parquet 和镜像</td><td>用 verl 在 train 集上跑通一次小规模 RL，看到 dev 分数变化</td></tr>
+<tr><td>8</td><td>发布：HF 数据集（train、dev）、镜像、评测代码、排行榜；test 集由我们来跑</td><td>分赛道、分档报分，附置信区间和成本</td></tr>
+</tbody></table></div>
+<p class=note style="margin-top:10px">还没定：VLM 裁判用哪个模型、生图模型基线用哪几个、隐藏 test 集怎么跑（对方给 API 由我们跑，还是限时评测窗口）、从 X 收集的 prompt 怎么处理授权、test 集规模和更换频率。</p>
 </section>
 
 <section class=block>
