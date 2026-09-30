@@ -68,11 +68,14 @@ details{border-top:1px solid var(--rule);padding-top:6px}summary{cursor:pointer;
 <div class=card><h4>任务</h4><p>只做静态图。输入一段文字，交三样东西：最终 PNG、生成它的代码、一条能从头重跑的命令。可交互场景和 3D 建模已有不少 benchmark，不在范围内。</p></div>
 <div class=card><h4>赛道</h4><ul><li><b>主赛道</b>：只给文字。不联网，不读现成图片、素材和模型。</li><li><b>素材赛道</b>：可以用授权的照片、贴图、HDRI、3D 模型。</li><li><b>辅助赛道</b>：给一张参考图，用代码画出来，按像素相似度客观打分，适合当 RL 奖励（千里江山图属于这类）。</li></ul><p>所有赛道都禁止调用生图模型。</p></div>
 <div class=card><h4>预算档</h4><p>单轮（写完不看图）、6 轮、不限轮三档分别报分，每档都记 token、时间和轮数。单轮分数衡量模型本身；它和多轮之间的差距，就是后训练能把 harness 能力搬进权重的空间。</p></div>
-<div class=card><h4>评测三层</h4><ul><li><b>程序化规则</b>：能渲染、尺寸对、没有嵌入位图、没联网、没调模型、能复现；题目里可检查的约束（物体数量、文字内容、颜色、位置）用规则判。</li><li><b>VLM 裁判</b>：按细则打分，并和生图模型的同题图两两比较。</li><li><b>人工校准</b>：一小批人工盲评，检查 VLM 裁判和人的一致性。</li></ul></div>
+<div class=card><h4>评测三层</h4><ul><li><b>程序化规则，当门槛</b>：能渲染、输出路径和尺寸对、没有嵌入位图、没联网、没调模型、代码能重跑出同一张图、题目里可检查的约束（数量、文字、颜色、位置）满足。任何一条不过，总分归零，judge 分再高也不算。</li><li><b>VLM 裁判</b>：按细则逐张打分，再和固定图池两两比较，比较顺序做位置平衡，抵消 judge 偏爱某个位置的问题。grader 还会读代码：抓出把像素数组硬编码进代码这类作弊，也给可改、参数化这些代码自带的优势打分（次要维度）。</li><li><b>人工校准</b>：每个题目类别公布 VLM 裁判和人工的一致率；同一张图判几次结果不稳的维度，不交给裁判。</li></ul></div>
 <div class=card><h4>题目</h4><p>风景、街景、动物、人物、静物、多物体、指定画风（水墨、像素、动画背景等），外加一组"代码该赢"的题：精确数量、画面里的文字、几何布局、对已有图的精确修改。</p></div>
-<div class=card><h4>给后训练用</h4><p>训练题和测试题分开，测试题不公开并定期更换。规则分和 VLM 裁判分可以直接组合成训练奖励。统一的渲染环境（装好 Chrome、Blender、Node、Python）做成镜像。</p></div>
+<div class=card><h4>数据和环境格式</h4><p>每条任务一行：<code>prompt</code>、<code>reward_model</code>（怎么判分）、<code>extra_info</code>（任务 id、Docker 镜像）。渲染环境（Chrome、Blender、Node、Python）做成统一镜像，可以直接接进 verl 这类训练框架。数据分三份，共用同一套环境代码：<b>train</b> 公开、量大，可自动出题、自动生成细则；<b>dev</b> 公开、细则经人工核对，用来报分；<b>test</b> 不公开、细则由人写、定期更换，不进训练。</p></div>
+<div class=card><h4>训练 reward 和 benchmark 分数分开算</h4><p>训练时同一题跑一组（比如 8 个）rollout，组内互相比较给相对分，适合 GRPO。benchmark 不能只和自己比：和固定图池两两比较，图池里有生图模型的同题图和参考 agent 的图，最后给胜率或 Elo，回答"和生图模型比怎么样"。</p></div>
+<div class=card><h4>防刷分</h4><p>提前堵上这类手法：base64 塞位图、下载图片、安装或调用生图模型、加载预训练权重、在画面里写字骗 judge 或写 prompt injection。沙盒断网，静态扫描加运行时检查，judge 只看像素，另出一批对抗样本测 judge。确认作弊的 reward 归零。</p></div>
+<div class=card><h4>效率也是指标</h4><p>每个预算档都报 token、轮数和时间。同样质量下用得更少，本身就是后训练要优化的目标。</p></div>
 </div>
-<p class=note style="margin-top:14px">还没定：题库规模、VLM 裁判选型、生图模型基线用哪几个、渲染镜像的具体内容。</p>
+<p class=note style="margin-top:14px">还没定：题库规模、VLM 裁判选型、生图模型基线用哪几个、渲染镜像的具体内容。环境打包、组内比较评分和门槛式奖励参考了小米 <a href="https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss" target=_blank rel=noopener>MiMo-V2.6 开源的 RL 环境</a>和 <a href="https://arxiv.org/abs/2609.32577" target=_blank rel=noopener>GAGAR</a>；人工校准是它们没做的部分。</p>
 </section>
 
 <section class=block>
