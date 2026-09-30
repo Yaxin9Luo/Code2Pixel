@@ -1,0 +1,581 @@
+[
+ {
+  "id": "A01",
+  "track": "A",
+  "prompt": "01",
+  "final": {
+   "clip": 24.72,
+   "rank": 1,
+   "top": "01",
+   "aes": 6.123
+  },
+  "round1": {
+   "clip": 25.05,
+   "rank": 1,
+   "top": "01",
+   "aes": 5.991
+  }
+ },
+ {
+  "id": "A02",
+  "track": "A",
+  "prompt": "02",
+  "final": {
+   "clip": 28.16,
+   "rank": 1,
+   "top": "02",
+   "aes": 6.358
+  },
+  "round1": {
+   "clip": 26.58,
+   "rank": 1,
+   "top": "02",
+   "aes": 6.373
+  }
+ },
+ {
+  "id": "A03",
+  "track": "A",
+  "prompt": "03",
+  "final": {
+   "clip": 26.39,
+   "rank": 1,
+   "top": "03",
+   "aes": 6.006
+  },
+  "round1": {
+   "clip": 25.4,
+   "rank": 1,
+   "top": "03",
+   "aes": 5.983
+  }
+ },
+ {
+  "id": "A04",
+  "track": "A",
+  "prompt": "04",
+  "final": {
+   "clip": 27.58,
+   "rank": 1,
+   "top": "04",
+   "aes": 5.935
+  },
+  "round1": {
+   "clip": 26.93,
+   "rank": 1,
+   "top": "04",
+   "aes": 5.742
+  }
+ },
+ {
+  "id": "A05",
+  "track": "A",
+  "prompt": "05",
+  "final": {
+   "clip": 30.04,
+   "rank": 1,
+   "top": "05",
+   "aes": 5.867
+  },
+  "round1": {
+   "clip": 30.67,
+   "rank": 1,
+   "top": "05",
+   "aes": 5.723
+  }
+ },
+ {
+  "id": "A06",
+  "track": "A",
+  "prompt": "06",
+  "final": {
+   "clip": 26.7,
+   "rank": 1,
+   "top": "06",
+   "aes": 5.924
+  },
+  "round1": {
+   "clip": 26.25,
+   "rank": 1,
+   "top": "06",
+   "aes": 5.951
+  }
+ },
+ {
+  "id": "A07",
+  "track": "A",
+  "prompt": "07",
+  "final": {
+   "clip": 28.92,
+   "rank": 1,
+   "top": "07",
+   "aes": 5.722
+  },
+  "round1": {
+   "clip": 27.91,
+   "rank": 1,
+   "top": "07",
+   "aes": 5.735
+  }
+ },
+ {
+  "id": "A08",
+  "track": "A",
+  "prompt": "08",
+  "final": {
+   "clip": 27.72,
+   "rank": 1,
+   "top": "08",
+   "aes": 6.106
+  },
+  "round1": {
+   "clip": 28.0,
+   "rank": 1,
+   "top": "08",
+   "aes": 5.862
+  }
+ },
+ {
+  "id": "A09",
+  "track": "A",
+  "prompt": "09",
+  "final": {
+   "clip": 29.26,
+   "rank": 1,
+   "top": "09",
+   "aes": 5.965
+  },
+  "round1": {
+   "clip": 28.17,
+   "rank": 1,
+   "top": "09",
+   "aes": 5.792
+  }
+ },
+ {
+  "id": "A10",
+  "track": "A",
+  "prompt": "10",
+  "final": {
+   "clip": 31.74,
+   "rank": 1,
+   "top": "10",
+   "aes": 6.14
+  },
+  "round1": {
+   "clip": 30.68,
+   "rank": 1,
+   "top": "10",
+   "aes": 5.823
+  }
+ },
+ {
+  "id": "A11",
+  "track": "A",
+  "prompt": "11",
+  "final": {
+   "clip": 29.42,
+   "rank": 1,
+   "top": "11",
+   "aes": 5.962
+  },
+  "round1": {
+   "clip": 29.4,
+   "rank": 1,
+   "top": "11",
+   "aes": 5.786
+  }
+ },
+ {
+  "id": "A12",
+  "track": "A",
+  "prompt": "12",
+  "final": {
+   "clip": 31.93,
+   "rank": 1,
+   "top": "12",
+   "aes": 5.87
+  },
+  "round1": {
+   "clip": 33.42,
+   "rank": 1,
+   "top": "12",
+   "aes": 5.827
+  }
+ },
+ {
+  "id": "B01",
+  "track": "B",
+  "prompt": "01",
+  "final": {
+   "clip": 31.25,
+   "rank": 1,
+   "top": "01",
+   "aes": 5.649
+  },
+  "round1": {
+   "clip": 30.64,
+   "rank": 1,
+   "top": "01",
+   "aes": 5.628
+  },
+  "refs": [
+   {
+    "file": "Nanxun_-_Ancient_water_town_-_0100.jpg",
+    "clip": 30.12,
+    "rank": 1,
+    "top": "01",
+    "aes": 5.586
+   },
+   {
+    "file": "乌篷船_-_panoramio.jpg",
+    "clip": 25.78,
+    "rank": 1,
+    "top": "01",
+    "aes": 5.157
+   }
+  ]
+ },
+ {
+  "id": "B02",
+  "track": "B",
+  "prompt": "02",
+  "final": {
+   "clip": 25.53,
+   "rank": 1,
+   "top": "02",
+   "aes": 6.289
+  },
+  "round1": {
+   "clip": 24.25,
+   "rank": 1,
+   "top": "02",
+   "aes": 6.211
+  },
+  "refs": [
+   {
+    "file": "matterhorn_stellisee_sunset_giles_laurent.jpg",
+    "clip": 25.0,
+    "rank": 1,
+    "top": "02",
+    "aes": 6.351
+   }
+  ]
+ },
+ {
+  "id": "B03",
+  "track": "B",
+  "prompt": "03",
+  "final": {
+   "clip": 30.09,
+   "rank": 1,
+   "top": "03",
+   "aes": 5.715
+  },
+  "round1": {
+   "clip": 29.78,
+   "rank": 1,
+   "top": "03",
+   "aes": 5.875
+  },
+  "refs": [
+   {
+    "file": "Akai-Hane_Beverage_vending_machine_in_Japan_2014.jpg",
+    "clip": 18.02,
+    "rank": 1,
+    "top": "03",
+    "aes": 4.609
+   },
+   {
+    "file": "Yokocho.jpg",
+    "clip": 29.71,
+    "rank": 1,
+    "top": "03",
+    "aes": 5.627
+   }
+  ]
+ },
+ {
+  "id": "B04",
+  "track": "B",
+  "prompt": "04",
+  "final": {
+   "clip": 30.08,
+   "rank": 1,
+   "top": "04",
+   "aes": 6.153
+  },
+  "round1": {
+   "clip": 27.59,
+   "rank": 1,
+   "top": "04",
+   "aes": 5.8
+  },
+  "refs": [
+   {
+    "file": "Hunting_fox_Hayden_Valley_28415856272_.jpg",
+    "clip": 28.02,
+    "rank": 1,
+    "top": "04",
+    "aes": 5.86
+   }
+  ]
+ },
+ {
+  "id": "B05",
+  "track": "B",
+  "prompt": "05",
+  "final": {
+   "clip": 30.31,
+   "rank": 1,
+   "top": "05",
+   "aes": 4.906
+  },
+  "round1": {
+   "clip": 29.41,
+   "rank": 1,
+   "top": "05",
+   "aes": 4.782
+  },
+  "refs": [
+   {
+    "file": "Basking_in_the_spring_sun_(54428014640).jpg",
+    "clip": 30.31,
+    "rank": 1,
+    "top": "05",
+    "aes": 4.879
+   }
+  ]
+ },
+ {
+  "id": "B06",
+  "track": "B",
+  "prompt": "06",
+  "final": {
+   "clip": 25.29,
+   "rank": 1,
+   "top": "06",
+   "aes": 5.34
+  },
+  "round1": {
+   "clip": 22.43,
+   "rank": 1,
+   "top": "06",
+   "aes": 5.798
+  },
+  "refs": [
+   {
+    "file": "elderly_man_reading_pipe_window_shixart1985.jpg",
+    "clip": 23.1,
+    "rank": 1,
+    "top": "06",
+    "aes": 5.755
+   }
+  ]
+ },
+ {
+  "id": "B07",
+  "track": "B",
+  "prompt": "07",
+  "final": {
+   "clip": 28.22,
+   "rank": 1,
+   "top": "07",
+   "aes": 5.534
+  },
+  "round1": {
+   "clip": 27.78,
+   "rank": 1,
+   "top": "07",
+   "aes": 5.527
+  },
+  "refs": [
+   {
+    "file": "Platja_dels_Terrers_kite_girl_(42427128840).jpg",
+    "clip": 30.28,
+    "rank": 1,
+    "top": "07",
+    "aes": 5.376
+   }
+  ]
+ },
+ {
+  "id": "B08",
+  "track": "B",
+  "prompt": "08",
+  "final": {
+   "clip": 32.31,
+   "rank": 1,
+   "top": "08",
+   "aes": 5.897
+  },
+  "round1": {
+   "clip": 33.11,
+   "rank": 1,
+   "top": "08",
+   "aes": 5.699
+  },
+  "refs": [
+   {
+    "file": "Fruit_bowl_on_woode_table.jpg",
+    "clip": 23.32,
+    "rank": 1,
+    "top": "08",
+    "aes": 4.817
+   },
+   {
+    "file": "Stillleben_mit-Obst(Kiel)-msu-1181.jpg",
+    "clip": 26.91,
+    "rank": 1,
+    "top": "08",
+    "aes": 4.869
+   }
+  ]
+ },
+ {
+  "id": "B09",
+  "track": "B",
+  "prompt": "09",
+  "final": {
+   "clip": 29.88,
+   "rank": 1,
+   "top": "09",
+   "aes": 5.273
+  },
+  "round1": {
+   "clip": 29.1,
+   "rank": 1,
+   "top": "09",
+   "aes": 5.336
+  },
+  "refs": [
+   {
+    "file": "Laptop_and_lamp_on_table_(Unsplash).jpg",
+    "clip": 28.2,
+    "rank": 1,
+    "top": "09",
+    "aes": 5.314
+   },
+   {
+    "file": "Open_book_in_sun_(Unsplash).jpg",
+    "clip": 16.51,
+    "rank": 1,
+    "top": "09",
+    "aes": 5.177
+   },
+   {
+    "file": "White_cup_and_MacBook_(Unsplash).jpg",
+    "clip": 18.7,
+    "rank": 1,
+    "top": "09",
+    "aes": 5.223
+   }
+  ]
+ },
+ {
+  "id": "B10",
+  "track": "B",
+  "prompt": "10",
+  "final": {
+   "clip": 32.03,
+   "rank": 1,
+   "top": "10",
+   "aes": 5.737
+  },
+  "round1": {
+   "clip": 29.27,
+   "rank": 1,
+   "top": "10",
+   "aes": 5.616
+  },
+  "refs": [
+   {
+    "file": "brahmaputra_fisherman_boat_silhouette_inu_etc.jpg",
+    "clip": 17.9,
+    "rank": 1,
+    "top": "10",
+    "aes": 5.955
+   },
+   {
+    "file": "li_river_hills_in_mist_dcrjsr.jpg",
+    "clip": 16.22,
+    "rank": 2,
+    "top": "01",
+    "aes": 5.093
+   },
+   {
+    "file": "reeds_through_the_reeds_keven_law.jpg",
+    "clip": 6.76,
+    "rank": 10,
+    "top": "05",
+    "aes": 5.48
+   }
+  ]
+ },
+ {
+  "id": "B11",
+  "track": "B",
+  "prompt": "11",
+  "final": {
+   "clip": 29.16,
+   "rank": 1,
+   "top": "11",
+   "aes": 5.724
+  },
+  "round1": {
+   "clip": 28.99,
+   "rank": 1,
+   "top": "11",
+   "aes": 5.381
+  },
+  "refs": [
+   {
+    "file": "Bodiam_Castle_from_the_north_2019-05-28.jpg",
+    "clip": 15.79,
+    "rank": 1,
+    "top": "11",
+    "aes": 5.663
+   },
+   {
+    "file": "French_-_Child's_Suit_of_Armor_-_Walters_51590_(2).jpg",
+    "clip": 14.89,
+    "rank": 1,
+    "top": "11",
+    "aes": 5.197
+   }
+  ]
+ },
+ {
+  "id": "B12",
+  "track": "B",
+  "prompt": "12",
+  "final": {
+   "clip": 34.79,
+   "rank": 1,
+   "top": "12",
+   "aes": 5.525
+  },
+  "round1": {
+   "clip": 33.95,
+   "rank": 1,
+   "top": "12",
+   "aes": 5.56
+  },
+  "refs": [
+   {
+    "file": "2016_Chmura_Cumulus_congestus_01.jpg",
+    "clip": 21.27,
+    "rank": 1,
+    "top": "12",
+    "aes": 4.966
+   },
+   {
+    "file": "Aomori_countryside,_Aomori_Prefecture;_June_2010_(21).jpg",
+    "clip": 21.77,
+    "rank": 1,
+    "top": "12",
+    "aes": 5.079
+   }
+  ]
+ }
+]

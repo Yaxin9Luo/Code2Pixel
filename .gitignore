@@ -1,0 +1,10 @@
+__pycache__/
+*.so
+*.png
+*.jpg
+*.jpeg
+!report/*.png
+demo/*/*/refs/*
+!demo/*/*/refs/credits.json
+demo/A/06/scene.svg
+.DS_Store

@@ -1,0 +1,492 @@
+[
+ {
+  "id": "A01",
+  "dir": "demo/A/01",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 14.2,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 1207,
+  "code_bytes": 52906,
+  "flags": [],
+  "regen_s": 14.9,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A02",
+  "dir": "demo/A/02",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 17.1,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 584,
+  "code_bytes": 23058,
+  "flags": [],
+  "regen_s": 19.9,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A03",
+  "dir": "demo/A/03",
+  "issues": [],
+  "size": [
+   1152,
+   1536
+  ],
+  "n_rounds": 6,
+  "minutes": 18.1,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 1314,
+  "code_bytes": 60832,
+  "flags": [],
+  "regen_s": 20.4,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A04",
+  "dir": "demo/A/04",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 21.2,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 744,
+  "code_bytes": 34567,
+  "flags": [],
+  "regen_s": 10.0,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A05",
+  "dir": "demo/A/05",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 24.8,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 909,
+  "code_bytes": 41861,
+  "flags": [],
+  "regen_s": 35.3,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A06",
+  "dir": "demo/A/06",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 14.0,
+  "code_files": [
+   "draw.py",
+   "scene.svg"
+  ],
+  "code_lines": 725,
+  "code_bytes": 217587,
+  "flags": [
+   "draw.py:74 读图？ return f\"url(#{id_})\"",
+   "draw.py:82 读图？ return f\"url(#{id_})\"",
+   "draw.py:87 读图？ return f\"url(#{id_})\"",
+   "draw.py:96 读图？ return f\"url(#b{str(s_).replace('.', '_')})\"",
+   "draw.py:122 读图？ add(\"rect\", x=0, y=0, width=W, height=FLOOR_Y, fill=\"url(#stripe)\")",
+   "draw.py:417 读图？ add(\"rect\", x=700, y=690, width=200, height=330, clip_path=\"url(#legsall)\", style=\"mix-blend-mode:sc",
+   "draw.py:658 读图？ group_start(mask=\"url(#figall)\", style=\"mix-blend-mode:screen\")",
+   "draw.py:688 联网？ svg = (f'<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{W}\" height=\"{H}\" viewBox=\"0 0 {W} {H}\">'",
+   "draw.py:696 读图？ img = np.asarray(Image.open(png_in).convert(\"RGB\"), np.float32) / 255",
+   "scene.svg:1 联网？ <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1536\" height=\"1024\" viewBox=\"0 0 1536 1024\"><defs><fi",
+   "scene.svg:1 读图？ <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1536\" height=\"1024\" viewBox=\"0 0 1536 1024\"><defs><fi"
+  ],
+  "regen_s": 4.1,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A07",
+  "dir": "demo/A/07",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 12.1,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 614,
+  "code_bytes": 30290,
+  "flags": [],
+  "regen_s": 16.3,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A08",
+  "dir": "demo/A/08",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 20.8,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 716,
+  "code_bytes": 28511,
+  "flags": [],
+  "regen_s": 58.8,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A09",
+  "dir": "demo/A/09",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 16.1,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 917,
+  "code_bytes": 39496,
+  "flags": [],
+  "regen_s": 41.6,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A10",
+  "dir": "demo/A/10",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 6,
+  "minutes": 11.8,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 449,
+  "code_bytes": 22263,
+  "flags": [],
+  "regen_s": 1.2,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A11",
+  "dir": "demo/A/11",
+  "issues": [],
+  "size": [
+   1536,
+   960
+  ],
+  "n_rounds": 6,
+  "minutes": 11.0,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 878,
+  "code_bytes": 29407,
+  "flags": [],
+  "regen_s": 0.3,
+  "regen": "完全一致"
+ },
+ {
+  "id": "A12",
+  "dir": "demo/A/12",
+  "issues": [],
+  "size": [
+   1600,
+   900
+  ],
+  "n_rounds": 6,
+  "minutes": 19.8,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 805,
+  "code_bytes": 36572,
+  "flags": [],
+  "regen_s": 19.3,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B01",
+  "dir": "demo/B/01",
+  "issues": [],
+  "size": [
+   1600,
+   1021
+  ],
+  "n_rounds": 6,
+  "minutes": 35.9,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 221,
+  "code_bytes": 11490,
+  "flags": [],
+  "n_refs": 2,
+  "regen_s": 1.6,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B02",
+  "dir": "demo/B/02",
+  "issues": [],
+  "size": [
+   1440,
+   960
+  ],
+  "n_rounds": 5,
+  "minutes": 16.3,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 238,
+  "code_bytes": 11478,
+  "flags": [],
+  "n_refs": 1,
+  "regen_s": 2.9,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B03",
+  "dir": "demo/B/03",
+  "issues": [],
+  "size": [
+   1600,
+   1200
+  ],
+  "n_rounds": 6,
+  "minutes": 38.0,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 256,
+  "code_bytes": 13457,
+  "flags": [],
+  "n_refs": 2,
+  "regen_s": 7.3,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B04",
+  "dir": "demo/B/04",
+  "issues": [],
+  "size": [
+   1536,
+   1024
+  ],
+  "n_rounds": 5,
+  "minutes": 19.4,
+  "code_files": [
+   "draw.py",
+   "search.py"
+  ],
+  "code_lines": 333,
+  "code_bytes": 14781,
+  "flags": [
+   "search.py:13 联网？ import urllib.error",
+   "search.py:14 联网？ import urllib.parse",
+   "search.py:15 联网？ import urllib.request",
+   "search.py:20 联网？ UA = {\"User-Agent\": \"CodegenDrawingDemo/1.0 (one-off photo reference lookup for a research demo) pyt",
+   "search.py:30 联网？ with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:",
+   "search.py:32 联网？ except urllib.error.HTTPError as e:",
+   "search.py:41 联网？ q = urllib.parse.urlencode(dict(params, format=\"json\"))"
+  ],
+  "n_refs": 2,
+  "regen_s": 2.1,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B05",
+  "dir": "demo/B/05",
+  "issues": [],
+  "size": [
+   1600,
+   800
+  ],
+  "n_rounds": 4,
+  "minutes": 17.6,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 160,
+  "code_bytes": 7616,
+  "flags": [],
+  "n_refs": 1,
+  "regen_s": 3.7,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B06",
+  "dir": "demo/B/06",
+  "issues": [],
+  "size": [
+   1500,
+   998
+  ],
+  "n_rounds": 6,
+  "minutes": 15.3,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 177,
+  "code_bytes": 9182,
+  "flags": [],
+  "n_refs": 1,
+  "regen_s": 2.6,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B07",
+  "dir": "demo/B/07",
+  "issues": [],
+  "size": [
+   1600,
+   1600
+  ],
+  "n_rounds": 6,
+  "minutes": 27.7,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 148,
+  "code_bytes": 7114,
+  "flags": [],
+  "n_refs": 1,
+  "regen_s": 4.5,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B08",
+  "dir": "demo/B/08",
+  "issues": [],
+  "size": [
+   1600,
+   1200
+  ],
+  "n_rounds": 6,
+  "minutes": 29.1,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 398,
+  "code_bytes": 20099,
+  "flags": [],
+  "n_refs": 2,
+  "regen_s": 11.5,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B09",
+  "dir": "demo/B/09",
+  "issues": [],
+  "size": [
+   1600,
+   1243
+  ],
+  "n_rounds": 6,
+  "minutes": 39.6,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 186,
+  "code_bytes": 9938,
+  "flags": [],
+  "n_refs": 3,
+  "regen_s": 4.0,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B10",
+  "dir": "demo/B/10",
+  "issues": [],
+  "size": [
+   1500,
+   1000
+  ],
+  "n_rounds": 6,
+  "minutes": 46.9,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 286,
+  "code_bytes": 14301,
+  "flags": [],
+  "n_refs": 3,
+  "regen_s": 1.5,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B11",
+  "dir": "demo/B/11",
+  "issues": [],
+  "size": [
+   1600,
+   1200
+  ],
+  "n_rounds": 6,
+  "minutes": 31.0,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 329,
+  "code_bytes": 16515,
+  "flags": [],
+  "n_refs": 2,
+  "regen_s": 1.7,
+  "regen": "完全一致"
+ },
+ {
+  "id": "B12",
+  "dir": "demo/B/12",
+  "issues": [],
+  "size": [
+   1600,
+   900
+  ],
+  "n_rounds": 6,
+  "minutes": 16.6,
+  "code_files": [
+   "draw.py"
+  ],
+  "code_lines": 358,
+  "code_bytes": 18861,
+  "flags": [],
+  "n_refs": 2,
+  "regen_s": 2.7,
+  "regen": "完全一致"
+ }
+]

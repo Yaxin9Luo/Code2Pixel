@@ -1,0 +1,109 @@
+[
+ {
+  "track": "A",
+  "prompts": [
+   "02",
+   "06",
+   "10"
+  ],
+  "tokens": 358407,
+  "tool_uses": 73,
+  "minutes": 60.0,
+  "notes": "10 的题字用系统字体（行楷），06 后期读同一命令刚渲染的中间 PNG；都记在 log.json"
+ },
+ {
+  "track": "A",
+  "prompts": [
+   "04",
+   "08",
+   "12"
+  ],
+  "tokens": 418155,
+  "tool_uses": 87,
+  "minutes": 72.3,
+  "notes": "08 用了 stylize.canvas_texture 加一层淡画布纹理；12 第 4 轮有一次改代码没生效、旧结果没看就被覆盖，已写入 log"
+ },
+ {
+  "track": "A",
+  "prompts": [
+   "03",
+   "07",
+   "11"
+  ],
+  "tokens": 460274,
+  "tool_uses": 73,
+  "minutes": 74.8,
+  "notes": "03 的灯笼和招牌文字用系统字体排版；三题都是 numpy + Pillow + scipy 逐像素画"
+ },
+ {
+  "track": "A",
+  "prompts": [
+   "01",
+   "05",
+   "09"
+  ],
+  "tokens": 476222,
+  "tool_uses": 77,
+  "minutes": 79.7,
+  "notes": "三张都是自写 numpy 光线追踪（面片 / SDF）；05 的毛发用了 stylize 的 LIC；01 的开始时间在建目录之后才记"
+ },
+ {
+  "track": "B",
+  "prompts": [
+   "04",
+   "08",
+   "12"
+  ],
+  "tokens": null,
+  "tool_uses": null,
+  "minutes": null,
+  "notes": "交了 04；08 找照片约 1 小时（下载 60 多张候选）后卡住 10 分钟被判失败，12 未开始。08、12 交给新 agent 重画；这次尝试的文件留在 B/_stalled_08"
+ },
+ {
+  "track": "B",
+  "prompts": [
+   "01",
+   "05",
+   "09"
+  ],
+  "tokens": 257079,
+  "tool_uses": 163,
+  "minutes": 94.8,
+  "notes": "三张都是照片合成 + 代码后期（抠图、补画、调色、雾、光效、阴影）；每轮代码快照存为 rounds/rN_draw.py"
+ },
+ {
+  "track": "B",
+  "prompts": [
+   "02",
+   "06",
+   "10"
+  ],
+  "tokens": 390295,
+  "tool_uses": 124,
+  "minutes": 95.2,
+  "notes": "10 等 Commons 限流（HTTP 429）花了不少时间；10 的题字用系统字体；02、10 用 CC BY-SA 照片，成品须同样按 CC BY-SA"
+ },
+ {
+  "track": "B",
+  "prompts": [
+   "03",
+   "07",
+   "11"
+  ],
+  "tokens": 427221,
+  "tool_uses": 157,
+  "minutes": 101.7,
+  "notes": "Commons API 多次 429 限流（几个 agent 同时搜）；07 的 stylize 水彩对输入很敏感，最终退回第 3 轮的输入"
+ },
+ {
+  "track": "B",
+  "prompts": [
+   "08",
+   "12"
+  ],
+  "tokens": 347018,
+  "tool_uses": 101,
+  "minutes": 48.9,
+  "notes": "重画 08、12（前一个 agent 卡住）；找照片每题看 10–12 张缩略图"
+ }
+]

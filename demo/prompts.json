@@ -1,0 +1,78 @@
+{
+ "fixed_at": "2026-09-25T06:32:28+00:00",
+ "note": "题目在任何一张图动手之前定下，之后不改；每个题目的 A、B 两张图无论好坏都展示。",
+ "prompts": [
+  {
+   "id": "01",
+   "category": "风景",
+   "zh": "雨后江南水乡：白墙黛瓦、石拱桥、河上一条乌篷船、远处薄雾。",
+   "en": "A Jiangnan water town after rain: white-walled houses with dark tiled roofs, a stone arch bridge, a covered wooden boat on the canal, light mist in the distance."
+  },
+  {
+   "id": "02",
+   "category": "风景",
+   "zh": "日落时的雪山湖泊，湖面倒映着山影。",
+   "en": "Snow-capped mountains at sunset above a calm alpine lake, with the mountains reflected in the water."
+  },
+  {
+   "id": "03",
+   "category": "街景",
+   "zh": "夜晚的日式小巷：红灯笼、发光的自动售货机、被雨打湿的石板路。",
+   "en": "A narrow Japanese alley at night with red paper lanterns, a glowing vending machine, and wet stone pavement after rain."
+  },
+  {
+   "id": "04",
+   "category": "动物",
+   "zh": "雪地里一只回头看的红狐。",
+   "en": "A red fox in the snow, looking back over its shoulder."
+  },
+  {
+   "id": "05",
+   "category": "动物",
+   "zh": "窗台上晒太阳的橘猫。",
+   "en": "An orange tabby cat sunbathing on a windowsill."
+  },
+  {
+   "id": "06",
+   "category": "人物",
+   "zh": "窗边看书的老人。",
+   "en": "An elderly man reading a book by a window."
+  },
+  {
+   "id": "07",
+   "category": "人物",
+   "zh": "海边放风筝的小女孩。",
+   "en": "A little girl flying a kite on the beach."
+  },
+  {
+   "id": "08",
+   "category": "静物",
+   "zh": "木桌上的一碗水果和一个陶罐，侧光。",
+   "en": "A still life of a bowl of fruit and a clay jar on a wooden table, lit from the side."
+  },
+  {
+   "id": "09",
+   "category": "多物体",
+   "zh": "书桌一角：台灯、打开的书、一杯咖啡、一盆绿植。",
+   "en": "A corner of a desk with a desk lamp, an open book, a cup of coffee, and a potted plant."
+  },
+  {
+   "id": "10",
+   "category": "指定画风",
+   "zh": "中国水墨画：月下孤舟。",
+   "en": "Chinese ink wash painting: a lone boat on the water under the moon."
+  },
+  {
+   "id": "11",
+   "category": "指定画风",
+   "zh": "像素画：勇者站在城堡前。",
+   "en": "Pixel art: a hero with a sword standing in front of a castle."
+  },
+  {
+   "id": "12",
+   "category": "指定画风",
+   "zh": "日系动画背景：夏日乡间小路和积雨云。",
+   "en": "Japanese anime background art: a country road in summer with towering cumulus clouds."
+  }
+ ]
+}
