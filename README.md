@@ -32,7 +32,7 @@
 
 所有赛道禁止调用生图模型。
 
-还没定：题库规模、VLM 裁判选型、生图模型基线、统一渲染镜像。
+还没定：题库规模、VLM 裁判选型、生图模型基线、统一渲染镜像、预算档怎么定义（验收时 agent 在三档都远没用满上限，只放宽上限拉不开档位）。
 
 环境打包、组内比较评分和门槛式奖励参考了 [MiMo-V2.6 开源的 RL 环境](https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss)和 [GAGAR](https://arxiv.org/abs/2609.32577)。它们没有公布 judge 和人的一致性，这是我们要补上的部分。评测自检、题目来源和细则格式参考了 [Automating eval design and hillclimbing](https://claude.dev/blog/automating-eval-design-and-hillclimbing/)。
 
@@ -40,7 +40,7 @@
 
 完整方案见 [docs/PLAN.md](docs/PLAN.md)：任务和输出约定、题库、三层评分、评测自检、数据格式、实现步骤、还没定的问题。步骤概要：
 
-1. 环境和 harness：统一 Docker 镜像、出口代理、用现成的 Claude Code 和 Codex 跑题，预算档强制执行（不看图、低预算两档已验收，高预算档待跑，见 [docs/PHASE1.md](docs/PHASE1.md)）
+1. 环境和 harness：统一 Docker 镜像、出口代理、用现成的 Claude Code 和 Codex 跑题，预算档强制执行（三个预算档都已验收；amd64 镜像待建，见 [docs/PHASE1.md](docs/PHASE1.md)）
 2. 门槛：路径校验、断网重跑比对、静态扫描、程序化约束，先用对抗样本测一遍
 3. 题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题
 4. VLM 裁判：逐条细则、图池两两比较与 Elo、读代码的 grader

@@ -203,7 +203,7 @@ TEMPLATE = """<!doctype html>
 <div class=cols>
 <div class=card><h4>任务</h4><p>只做静态图。输入一段文字，交三样东西：最终 PNG、生成它的代码、一条能从头重跑的命令。可交互场景和 3D 建模已有不少 benchmark，不在范围内。</p></div>
 <div class=card><h4>赛道</h4><ul><li><b>主赛道</b>：只给文字。不联网，不读现成图片、素材和模型。</li><li><b>素材赛道</b>：可以用授权的照片、贴图、HDRI、3D 模型。</li><li><b>辅助赛道</b>：给一张参考图，用代码画出来，按像素相似度客观打分，适合当 RL 奖励（千里江山图属于这类）。</li></ul><p>所有赛道都禁止调用生图模型。</p></div>
-<div class=card><h4>预算档</h4><p>不看图（禁止看任何图片，包括自己渲染的结果）、低预算（20 万 token、30 分钟）、高预算（100 万 token、90 分钟）三档分别报分，每档都记 token、时间和看图次数。token 只算新增输入和输出，不算缓存命中。不看图档衡量模型一次写对的本事；它和能看图的档位之间的差距，就是后训练能把"看图再改"搬进权重的空间。</p></div>
+<div class=card><h4>预算档</h4><p>不看图（禁止看任何图片，包括自己渲染的结果）、低预算（20 万 token、30 分钟）、高预算（100 万 token、90 分钟）三档分别报分，每档都记 token、时间和看图次数。token 只算新增输入和输出，不算缓存命中。不看图档衡量模型一次写对的本事；它和能看图的档位之间的差距，就是后训练能把"看图再改"搬进权重的空间。</p><p>第一轮验收里，Claude Code 和 Codex 在三档都远没用满上限（最多 13 万 token、22 分钟），每次都是自己停下的。只放宽上限拉不开档位，档位怎么定义还要再定（可能改成按推理强度分档）。</p></div>
 <div class=card><h4>评测三层</h4><ul><li><b>程序化规则，当门槛</b>：能渲染、输出路径和尺寸对、没有嵌入位图、没联网、没调模型、代码能重跑出同一张图、题目里可检查的约束（数量、文字、颜色、位置）满足。任何一条不过，总分归零，judge 分再高也不算。</li><li><b>VLM 裁判</b>：细则写成能核对的具体说法（"正好 3 只猫""月亮在右上角"），逐条判是或否，不打 1–5 分；再和固定图池两两比较，隐去作者，比较顺序做位置平衡，抵消 judge 偏爱某个位置的问题。grader 还会读代码：抓出把像素数组硬编码进代码这类作弊，也给可改、参数化这些代码自带的优势打分（次要维度）。</li><li><b>人工校准</b>：上线前先人工读一批打过分的样本，确认 judge 判得对；每个题目类别公布 VLM 裁判和人工的一致率；同一张图判几次结果不稳的维度，不交给裁判。</li></ul></div>
 <div class=card><h4>题目</h4><p>风景、街景、动物、人物、静物、多物体、指定画风（水墨、像素、动画背景等），外加一组"代码该赢"的题：精确数量、画面里的文字、几何布局、对已有图的精确修改。</p><p>来源优先用人们真实让 coding agent 画图的 prompt，其次人写，再次以真实 prompt 为锚的合成题。难度由人判定，不专挑当前模型做不好的题；所有模型都失败的题人工复查。</p></div>
 <div class=card><h4>数据和环境格式</h4><p>每条任务一行：<code>prompt</code>、<code>reward_model</code>（怎么判分）、<code>extra_info</code>（任务 id、Docker 镜像）。渲染环境（Chrome、Blender、Node、Python）做成统一镜像，可以直接接进 verl 这类训练框架。数据分三份，共用同一套环境代码：<b>train</b> 公开、量大，可自动出题、自动生成细则；<b>dev</b> 公开、细则经人工核对，用来报分；<b>test</b> 不公开、细则由人写、定期更换，不进训练。</p></div>
@@ -221,7 +221,7 @@ TEMPLATE = """<!doctype html>
 <p>完整方案（任务和输出约定、题库规模、评分细节、数据格式示例、还没定的问题）见 <a href="{gh}docs/PLAN.md" target=_blank rel=noopener>docs/PLAN.md</a>。</p>
 <div class=tablewrap><table><thead><tr><th>阶段</th><th>做什么</th><th>完成标准</th></tr></thead><tbody>
 <tr><td>0</td><td>试跑（已完成）</td><td>24 张图、结论和局限都在本报告里</td></tr>
-<tr><td>1</td><td>环境和 harness（进行中）：统一 Docker 镜像（Python、Node + Three.js、headless Chromium、Blender、中文字体）；出口代理只放行模型服务；直接用现成的 Claude Code 和 Codex 跑题；预算档强制执行；卡住和电脑睡眠检测；日志</td><td>3 题 × 2 个 agent 跑通不看图和低预算两档（已完成：12 次全部在预算内完成，全部逐像素复现，见 <a href="{gh}docs/PHASE1.md" target=_blank rel=noopener>docs/PHASE1.md</a>）；高预算档之后补</td></tr>
+<tr><td>1</td><td>环境和 harness（进行中）：统一 Docker 镜像（Python、Node + Three.js、headless Chromium、Blender、中文字体）；出口代理只放行模型服务；直接用现成的 Claude Code 和 Codex 跑题；预算档强制执行；卡住和电脑睡眠检测；日志</td><td>3 题 × 2 个 agent 跑通三个预算档（已完成：18 次全部在预算内完成，全部逐像素复现，见 <a href="{gh}docs/PHASE1.md" target=_blank rel=noopener>docs/PHASE1.md</a>）；amd64 镜像待建</td></tr>
 <tr><td>2</td><td>门槛：输出路径校验、断网重跑比对、静态扫描、运行时检查、程序化约束</td><td>对抗样本全部判 0；试跑里正常的图全部通过</td></tr>
 <tr><td>3</td><td>题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题</td><td>每题有来源、类别和人判的难度</td></tr>
 <tr><td>4</td><td>VLM 裁判：逐条细则；图池两两比较（位置平衡、Elo）；读代码的 grader</td><td>judge 两次判定不一致的比例低于 5%</td></tr>

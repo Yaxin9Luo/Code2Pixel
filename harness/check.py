@@ -8,6 +8,8 @@
 
 复现检查：把交上来的 src/ 和 run.sh 拷到干净目录，在断网的新容器里执行 run.sh，
 和交上来的 out/final.png 比：逐像素相同记"一致"，否则记 PSNR。结果写回 result.json 的 regen 字段。
+src/ 里只拷文本文件：图片、.blend 这类中间产物必须由 run.sh 重新生成，跳过的文件记在 regen.skipped。
+run.sh 要在该档的时间上限内跑完。
 """
 import argparse
 import json
@@ -20,7 +22,6 @@ import time
 REPO = pathlib.Path(__file__).resolve().parents[1]
 RUNS = REPO / "runs"
 IMAGE = "code2pixel/env:0.1"
-REGEN_MINUTES = 15
 
 
 def psnr(a, b):
@@ -31,7 +32,7 @@ def psnr(a, b):
     return math.inf if mse == 0 else 10 * math.log10(255 ** 2 / mse)
 
 
-def regen(run):
+def regen(run, minutes):
     from PIL import Image
     ws = run / "workspace"
     final = ws / "out" / "final.png"
@@ -41,7 +42,23 @@ def regen(run):
     if tmp.exists():
         shutil.rmtree(tmp)
     (tmp / "out").mkdir(parents=True)
-    shutil.copytree(ws / "src", tmp / "src")
+    skipped = []
+
+    def code_only(d, names):   # 跳过 __pycache__ 和不是文本的文件
+        skip = []
+        for n in names:
+            p = pathlib.Path(d) / n
+            if n == "__pycache__":
+                skip.append(n)
+            elif p.is_file():
+                try:
+                    p.read_text(encoding="utf-8")
+                except (UnicodeDecodeError, ValueError):
+                    skip.append(n)
+                    skipped.append(str(p.relative_to(ws)))
+        return skip
+
+    shutil.copytree(ws / "src", tmp / "src", ignore=code_only)
     shutil.copy(ws / "run.sh", tmp / "run.sh")
     subprocess.run(["chmod", "-R", "a+rwX", str(tmp)], check=True)
     name = f"c2p-regen-{run.name}".replace("_", "-").lower()[:60]
@@ -50,22 +67,25 @@ def regen(run):
     proc = subprocess.Popen(["docker", "run", "--name", name, "--network", "none", "--cpus", "4", "--memory", "6g",
                              "-v", f"{tmp}:/workspace", "-w", "/workspace", IMAGE, "bash", "run.sh"],
                             stdout=subprocess.DEVNULL, stderr=open(tmp / "regen_stderr.log", "w"))
+    timed_out = False
     try:
-        proc.wait(timeout=REGEN_MINUTES * 60)
+        proc.wait(timeout=minutes * 60)
     except subprocess.TimeoutExpired:
+        timed_out = True
         subprocess.run(["docker", "kill", name], capture_output=True)
         proc.wait()
     subprocess.run(["docker", "rm", "-f", name], capture_output=True)
     secs = round(time.time() - start)
     out = tmp / "out" / "final.png"
-    if not out.exists():
-        return {"status": "failed", "exit_code": proc.returncode, "seconds": secs}
+    if timed_out or not out.exists():
+        return {"status": "timeout" if timed_out else "failed", "exit_code": proc.returncode, "seconds": secs,
+                "skipped": skipped}
     a, b = Image.open(final).convert("RGB"), Image.open(out).convert("RGB")
     if a.size != b.size:
-        return {"status": "size_mismatch", "seconds": secs}
+        return {"status": "size_mismatch", "seconds": secs, "skipped": skipped}
     p = psnr(a, b)
     return {"status": "identical" if p == math.inf else "differs", "psnr": None if p == math.inf else round(p, 2),
-            "seconds": secs}
+            "seconds": secs, "skipped": skipped}
 
 
 def main():
@@ -79,7 +99,7 @@ def main():
         r = json.loads((run / "result.json").read_text())
         if a.regen and "regen" not in r and r["status"] == "completed":
             print("regen", run.name, flush=True)
-            r["regen"] = regen(run)
+            r["regen"] = regen(run, r["limits"]["minutes"])
             (run / "result.json").write_text(json.dumps(r, ensure_ascii=False, indent=1))
         rows.append((run, r))
 
