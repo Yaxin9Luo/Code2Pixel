@@ -41,7 +41,8 @@ TIERS = {
 }
 CODEX_DISABLED_FEATURES = ["image_generation", "browser_use", "browser_use_external", "computer_use",
                            "in_app_browser", "apps", "plugins", "remote_plugin"]
-STALL_MINUTES = 10   # 对话记录和会话记录连续这么久没有新内容，判定为卡住（比如模型流式回复挂住）
+STALL_MINUTES = 10   # 对话记录和会话记录连续这么久没有新内容、容器 CPU 也空闲，判定为卡住（比如模型流式回复挂住）
+STALL_CPU_PERCENT = 5   # 容器 CPU 高于这个值说明还在干活（比如长时间渲染），不算卡住
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp")
 
 
@@ -107,30 +108,70 @@ class Meter:
         self.image_views = 0
         self.model = None
         self.effort = None
+        self.read_image_attempts = 0    # Claude：调用 Read 读图片的次数（不看图档里会被拒绝）
+        self.tools = None               # Claude：会话实际启用的工具
+        self.reported = None            # Claude：结束时自己报告的总用量，用来对账
 
 
-def claude_line(meter, ev, seen):
-    """Claude Code stream-json：同一次 API 响应会拆成多条 assistant 事件，按 message.id 去重。"""
-    if ev.get("type") == "system" and ev.get("subtype") == "init":
+def claude_line(meter, ev, usage, current):
+    """Claude Code stream-json（加 --include-partial-messages）。
+    assistant 事件里的 usage 是请求开始时的快照，输出数停在个位数、不会更新；最终输出数只在流事件
+    message_delta 里。所以按 message_start 记下消息 id（子 agent 的流用 parent_tool_use_id 区分），
+    再用 message_delta 的 usage 更新。没有流事件的消息退回用 assistant 事件的 usage。
+    usage：消息 id → 这次调用的 usage；current：parent_tool_use_id → 正在流式输出的消息 id。
+    看图次数按工具结果里实际返回的图片数：被拒绝的读图尝试单独记，不算看图。"""
+    t = ev.get("type")
+    if t == "system" and ev.get("subtype") == "init":
         meter.model = ev.get("model")
-    if ev.get("type") != "assistant":
+        meter.tools = ev.get("tools")
+    if t == "result":
+        meter.reported = {k: ev.get(k) for k in ("usage", "modelUsage", "num_turns", "total_cost_usd",
+                                                  "is_error", "terminal_reason", "api_error")}
+    if t == "user":
+        content = ev.get("message", {}).get("content", [])
+        for block in content if isinstance(content, list) else []:
+            if isinstance(block, dict) and block.get("type") == "tool_result" and isinstance(block.get("content"), list):
+                meter.image_views += sum(1 for x in block["content"] if isinstance(x, dict) and x.get("type") == "image")
+    if t == "stream_event":
+        se, key = ev.get("event", {}), ev.get("parent_tool_use_id")
+        if se.get("type") == "message_start":
+            msg = se.get("message", {})
+            current[key] = msg.get("id")
+            usage[msg.get("id")] = dict(msg.get("usage") or {})
+        elif se.get("type") == "message_delta" and current.get(key) in usage:
+            u = usage[current[key]]
+            for k, v in (se.get("usage") or {}).items():   # 都是累计值，取大的
+                u[k] = max(u.get(k) or 0, v) if isinstance(v, (int, float)) else (v if v is not None else u.get(k))
+        else:
+            return
+    elif t == "assistant":
+        msg = ev.get("message", {})
+        for block in msg.get("content", []):
+            if block.get("type") == "tool_use" and block.get("name") == "Read":
+                if str(block.get("input", {}).get("file_path", "")).lower().endswith(IMAGE_EXT):
+                    meter.read_image_attempts += 1
+        if not msg.get("id") or msg["id"] in usage:
+            return
+        usage[msg["id"]] = dict(msg.get("usage") or {})
+    else:
         return
-    msg = ev.get("message", {})
-    for block in msg.get("content", []):
-        if block.get("type") == "tool_use" and block.get("name") == "Read":
-            if str(block.get("input", {}).get("file_path", "")).lower().endswith(IMAGE_EXT):
-                meter.image_views += 1
-    mid = msg.get("id")
-    if not mid or mid in seen:
-        return
-    seen.add(mid)
-    u = msg.get("usage", {})
-    meter.calls += 1
-    meter.raw["input"] += u.get("input_tokens", 0)
-    meter.raw["cache_write"] += u.get("cache_creation_input_tokens", 0)
-    meter.raw["cache_read"] += u.get("cache_read_input_tokens", 0)
-    meter.raw["output"] += u.get("output_tokens", 0)
+    us = usage.values()
+    meter.calls = len(usage)
+    meter.raw["input"] = sum(u.get("input_tokens") or 0 for u in us)
+    meter.raw["cache_write"] = sum(u.get("cache_creation_input_tokens") or 0 for u in us)
+    meter.raw["cache_read"] = sum(u.get("cache_read_input_tokens") or 0 for u in us)
+    meter.raw["output"] = sum(u.get("output_tokens") or 0 for u in us)
+    meter.raw["reasoning"] = sum((u.get("output_tokens_details") or {}).get("thinking_tokens") or 0 for u in us)
     meter.budget_tokens = meter.raw["input"] + meter.raw["cache_write"] + meter.raw["output"]
+
+
+def claude_reported_budget(reported):
+    """Claude Code 结束时报告的总用量（modelUsage 含所有模型、所有调用），口径同上。没有就返回 None。"""
+    mu = (reported or {}).get("modelUsage") or {}
+    if not mu:
+        return None
+    return sum((m.get("inputTokens") or 0) + (m.get("cacheCreationInputTokens") or 0) + (m.get("outputTokens") or 0)
+               for m in mu.values())
 
 
 def codex_rollout(meter, codex_home):
@@ -203,13 +244,15 @@ def main():
         token = "".join((SECRETS / "claude_token").read_text().split())   # 复制时终端折行会混进换行
         env += ["-e", f"CLAUDE_CODE_OAUTH_TOKEN={token}",
                 "-e", "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1", "-e", "DISABLE_AUTOUPDATER=1"]
-        cmd = ["claude", "-p", prompt, "--output-format", "stream-json", "--verbose",
+        # --include-partial-messages：输出 token 的最终数只在流事件里（见 claude_line）
+        cmd = ["claude", "-p", prompt, "--output-format", "stream-json", "--verbose", "--include-partial-messages",
                "--dangerously-skip-permissions", "--effort", a.effort]
         cmd += ["--model", a.model or "opus"]   # 订阅默认是 Sonnet，benchmark 默认测最强模型
         # WebSearch 在服务端执行，不经过代理；WebFetch 也一并禁用
         blocked = ["WebSearch", "WebFetch"]
         if not tier["look"]:
-            blocked += [f"Read(**/*{e})" for e in IMAGE_EXT]
+            # 相对规则管工作目录，// 开头的绝对规则管其他位置（比如渲染到 /tmp 再读）
+            blocked += [f"Read(**/*{e})" for e in IMAGE_EXT] + [f"Read(//**/*{e})" for e in IMAGE_EXT]
         cmd += ["--disallowedTools", *blocked]
     else:
         codex_home = run / "codex_home"
@@ -241,7 +284,7 @@ def main():
         print("警告：电脑在用电池。合盖或睡眠会中断运行，结果会被标成无效。", flush=True)
     if shutil.which("caffeinate"):   # 运行期间阻止空闲睡眠（合盖仍会睡）
         subprocess.Popen(["caffeinate", "-i", "-s", "-w", str(os.getpid())])
-    meter, seen = Meter(), set()
+    meter, usage, current = Meter(), {}, {}
     status = "completed"
     transcript = open(run / "transcript.jsonl", "w", encoding="utf-8")
     proc = subprocess.Popen(["docker", "exec", name, *cmd], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
@@ -255,6 +298,15 @@ def main():
             files += list((codex_home / "sessions").rglob("rollout-*.jsonl"))
         return max([started] + [f.stat().st_mtime for f in files if f.exists()])
 
+    busy_at = [started]   # 最近一次发现容器 CPU 在忙的时间
+
+    def container_cpu():
+        out = sh(["docker", "stats", "--no-stream", "--format", "{{.CPUPerc}}", name], check=False).stdout
+        try:
+            return float(out.strip().rstrip("%"))
+        except ValueError:
+            return 0.0
+
     def watchdog():
         nonlocal status
         while not stop.wait(5):
@@ -262,7 +314,10 @@ def main():
                 codex_rollout(meter, codex_home)
             if time.time() - started > tier["minutes"] * 60:
                 status = "timeout"
-            elif time.time() - last_activity() > STALL_MINUTES * 60:
+            elif time.time() - max(last_activity(), busy_at[0]) > STALL_MINUTES * 60:
+                if container_cpu() >= STALL_CPU_PERCENT:
+                    busy_at[0] = time.time()
+                    continue
                 status = "stalled"
             elif meter.budget_tokens > tier["tokens"]:
                 status = "token_budget_exceeded"
@@ -278,7 +333,7 @@ def main():
         transcript.flush()
         if a.agent == "claude":
             try:
-                claude_line(meter, json.loads(line), seen)
+                claude_line(meter, json.loads(line), usage, current)
             except json.JSONDecodeError:
                 pass
     proc.wait()
@@ -303,15 +358,21 @@ def main():
     (run / "proxy.log").write_text(proxy_log.stdout + proxy_log.stderr)
 
     final = ws / "out" / "final.png"
+    # Claude 以它结束时报告的总用量为准（含子 agent 等所有调用）；运行中实时统计的数另记一份，用来对账
+    reported = claude_reported_budget(meter.reported)
+    budget = reported if reported is not None else meter.budget_tokens
     result = dict(
         run_id=run_id, task_id=a.task, agent=a.agent, tier=a.tier, model=meter.model or a.model,
         effort=meter.effort or a.effort, status=status, minutes=round(elapsed / 60, 2),
-        budget_tokens=meter.budget_tokens, raw_tokens=meter.raw, model_calls=meter.calls,
+        budget_tokens=budget, budget_tokens_live=meter.budget_tokens, over_budget=budget > tier["tokens"],
+        raw_tokens=meter.raw, model_calls=meter.calls,
         image_views=meter.image_views, limits=tier,
         outputs=dict(final_png=final.exists(), run_sh=(ws / "run.sh").exists(),
                      src_files=sum(1 for p in (ws / "src").rglob("*") if p.is_file())),
         versions=versions.strip().splitlines(),
+        read_image_attempts=meter.read_image_attempts,
         nolook_violation=(not tier["look"] and meter.image_views > 0),
+        agent_tools=meter.tools, claude_reported=meter.reported,
         host_slept_seconds=round(slept), on_battery=on_battery,
     )
     (run / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=1))

@@ -15,8 +15,8 @@ for tier in "$@"; do
       line=$(python3 harness/run.py --task "$t" --agent "$agent" --tier "$tier" | python3 -c \
         'import json,sys; r=json.load(sys.stdin); print(r["status"], r["minutes"], "min", r["budget_tokens"], "tok", "views", r["image_views"], "final", r["outputs"]["final_png"])')
       echo "$line"
-      # 卡住，或一个 token 都没用就结束（基础设施问题）时重跑一次；其余情况（包括超预算）不重跑
-      case "$line" in stalled*|*" 0 tok"*) continue ;; *) break ;; esac
+      # 卡住、运行期间电脑睡过、或一个 token 都没用就结束（基础设施问题）时重跑一次；其余情况（包括超预算、超时）不重跑
+      case "$line" in stalled*|invalid_host_slept*|*" 0 tok"*) continue ;; *) break ;; esac
     done
   done
 done
