@@ -67,7 +67,9 @@ demo/            试跑：prompts.json（题目）、RULES.md（规则）、A/ B
 qianli/          前期探索：first_attempt/ 从零画千里江山图；fit/ 给参考图用三角形 SVG 复刻
 autoresearch/    agent 自动优化三角形拟合算法（SSIM 0.764 → 0.818，58 秒 → 26 秒）
 stylize/         照片风格化工具（水墨、水彩、油画等，传统算法 + C 内核，无神经网络）
-docs/            PLAN.md：设计与实现方案
+docs/            PLAN.md：设计与实现方案；PHASE1.md：阶段 1 进度和验收
+env/             统一 Docker 镜像（Dockerfile、c2p-render）和出口代理（proxy/）
+harness/         run.py：在镜像里跑 Claude Code 或 Codex、监控预算、收集产出；batch.sh：批量运行；tasks/：题目
 report/          报告 index.html 及生成脚本
 ```
 

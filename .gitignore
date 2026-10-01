@@ -8,3 +8,4 @@ demo/*/*/refs/*
 !demo/*/*/refs/credits.json
 demo/A/06/scene.svg
 .DS_Store
+runs/

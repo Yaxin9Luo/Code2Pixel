@@ -1,0 +1,8 @@
+# 只放行 agent 订阅登录和模型调用需要的域名（ERE，按域名匹配）。
+# 新增域名前先看 runs/*/proxy.log 里被拒绝的记录，确认是 agent 本身需要的。
+# Claude Code（订阅 token）
+^api\.anthropic\.com$
+# Codex（ChatGPT 订阅）
+^chatgpt\.com$
+^auth\.openai\.com$
+^api\.openai\.com$

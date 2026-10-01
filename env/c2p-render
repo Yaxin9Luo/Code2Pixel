@@ -1,0 +1,59 @@
+#!/opt/venv/bin/python3
+"""把 SVG 或 HTML 渲染成 PNG（headless Chromium，支持 WebGL）。
+
+用法：c2p-render input.svg|input.html output.png [--width 1536 --height 1024] [--wait-ms 0]
+
+页面通过本机 HTTP 服务打开（http://127.0.0.1:<port>/<绝对路径>），所以 ES module 可以正常 import，
+比如 Three.js：import * as THREE from "/opt/node/node_modules/three/build/three.module.js"。
+页面里的动画或异步绘制需要时间时，用 --wait-ms 等一会儿再截图；
+也可以在页面里设置 window.C2P_READY = true，渲染器会等到它变成 true（最多 60 秒）。
+"""
+import argparse
+import functools
+import http.server
+import pathlib
+import threading
+
+from playwright.sync_api import sync_playwright
+
+
+class Quiet(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, *args):
+        pass
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("src")
+    ap.add_argument("out")
+    ap.add_argument("--width", type=int, default=1536)
+    ap.add_argument("--height", type=int, default=1024)
+    ap.add_argument("--wait-ms", type=int, default=0)
+    a = ap.parse_args()
+    src = pathlib.Path(a.src).resolve()
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory="/"))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    url = f"http://127.0.0.1:{srv.server_address[1]}{src}"
+    errors = []
+    with sync_playwright() as p:
+        b = p.chromium.launch(args=["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
+                                    "--ignore-gpu-blocklist"])
+        page = b.new_page(viewport={"width": a.width, "height": a.height})
+        page.on("pageerror", lambda e: errors.append(str(e)))
+        page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+        page.goto(url)
+        page.wait_for_load_state("networkidle")
+        if page.evaluate("typeof window.C2P_READY !== 'undefined'"):
+            page.wait_for_function("window.C2P_READY === true", timeout=60_000)
+        if a.wait_ms:
+            page.wait_for_timeout(a.wait_ms)
+        page.screenshot(path=a.out, clip={"x": 0, "y": 0, "width": a.width, "height": a.height})
+        b.close()
+    srv.shutdown()
+    for e in errors:
+        print("page error:", e)
+    print(a.out)
+
+
+if __name__ == "__main__":
+    main()
