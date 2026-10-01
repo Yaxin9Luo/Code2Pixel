@@ -2,7 +2,7 @@
 """Code2Pixel harness：在统一镜像里跑一个现成 agent（Claude Code 或 Codex）完成一道题。
 
 用法：
-  python3 harness/run.py --task pilot-10 --agent claude --tier low
+  python3 harness/run.py --task pilot-10 --agent claude --tier run
   python3 harness/run.py --task pilot-10 --agent codex --tier nolook --model gpt-5.5
 
 做的事：
@@ -34,10 +34,11 @@ NET_INTERNAL = "c2p-internal"
 PROXY_NAME = "c2p-proxy"
 PROXY_URL = f"http://{PROXY_NAME}:8888"
 
+# 两档只差能不能看图。上限只防失控：验收里 agent 都是自己停下的，最多用了 13 万 token、22 分钟。
+# （2026-10-01 之前还有 low：20 万 token、30 分钟；high：100 万、90 分钟，见 docs/PHASE1.md）
 TIERS = {
-    "nolook": dict(tokens=200_000, minutes=30, look=False),
-    "low": dict(tokens=200_000, minutes=30, look=True),
-    "high": dict(tokens=1_000_000, minutes=90, look=True),
+    "nolook": dict(tokens=1_000_000, minutes=90, look=False),
+    "run": dict(tokens=1_000_000, minutes=90, look=True),
 }
 CODEX_DISABLED_FEATURES = ["image_generation", "browser_use", "browser_use_external", "computer_use",
                            "in_app_browser", "apps", "plugins", "remote_plugin"]

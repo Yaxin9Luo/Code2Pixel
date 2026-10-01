@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 按顺序跑一批验收：batch.sh <agent> <tier...>，题目默认 pilot-10 pilot-11 pilot-03
-# 例：harness/batch.sh codex nolook low
+# 例：harness/batch.sh codex nolook run
 set -u
 cd "$(dirname "$0")/.."
 agent=$1; shift
