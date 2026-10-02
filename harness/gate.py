@@ -343,7 +343,8 @@ def check_region_color(im, c, task_dir):
 
 
 def check_unchanged_region(im, c, task_dir):
-    """精确修改题：除了 edit_box 以外的像素和参考图 ref 一致（每个通道差不超过 tol）。"""
+    """精确修改题：edit_box 以外的像素和参考图 ref 一致：每个通道差不超过 tol 的像素算没变，
+    变了的像素最多占框外的 max_frac（光晕、雨丝这类全局效果可能带出极少量变化）。"""
     import numpy as np
     from PIL import Image
     ref = Image.open(task_dir / c["ref"]).convert("RGB")
@@ -353,7 +354,8 @@ def check_unchanged_region(im, c, task_dir):
     x0, y0, x1, y1 = _box(im, c["edit_box"])
     d[y0:y1, x0:x1] = 0
     bad = int((d > c.get("tol", 0)).sum())
-    return bad == 0, {"changed_pixels_outside": bad}
+    frac = bad / max(d.size - (y1 - y0) * (x1 - x0), 1)
+    return frac <= c.get("max_frac", 0), {"changed_pixels_outside": bad, "changed_frac": round(frac, 5)}
 
 
 CHECKS = {"region_color": check_region_color, "unchanged_region": check_unchanged_region}
@@ -382,10 +384,11 @@ def gate(run, size=None, tasks_file=TASKS):
     ws = run / "workspace"
     result = json.loads((run / "result.json").read_text()) if (run / "result.json").exists() else {}
     task_gate = {}
-    if result.get("task_id") and tasks_file.exists():
-        for l in open(tasks_file, encoding="utf-8"):
-            if l.strip() and json.loads(l)["extra_info"]["task_id"] == result["task_id"]:
-                task_gate = json.loads(l)["reward_model"]["gate"]
+    if result.get("task_id"):   # 在 harness/tasks/ 下所有题库里找这道题
+        for f in sorted(tasks_file.parent.glob("*.jsonl")):
+            for l in open(f, encoding="utf-8"):
+                if l.strip() and json.loads(l)["extra_info"]["task_id"] == result["task_id"]:
+                    task_gate = json.loads(l)["reward_model"]["gate"]
     size = size or task_gate.get("size")
     minutes = (result.get("limits") or {}).get("minutes", 90)
 

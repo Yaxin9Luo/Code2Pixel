@@ -68,39 +68,45 @@ def ensure_network():
 
 # ---------------------------------------------------------------- 题目说明
 def task_text(task, tier):
+    """题目说明（英文，和题库语言一致）。2026-10-02 之前的运行用的是中文模板。"""
     t = TIERS[tier]
     size = task["reward_model"]["gate"]["size"]
-    look = ("你可以渲染后查看自己画出的图片，再修改。" if t["look"] else
-            "本档不允许查看任何图片，包括你自己渲染出的结果：不要读取或打开图片文件，写完代码、生成图片后直接交稿。")
-    return f"""# 任务
+    look = ("You may render and look at your own images, then revise." if t["look"] else
+            "In this tier you may not look at any image, including your own renders: do not read or open image "
+            "files. Write the code, generate the image, and submit.")
+    if task["extra_info"].get("edit_base"):   # 精确修改题：工作区里已有一份底稿程序
+        intro = ("The workspace already contains a drawing program (`src/` and `run.sh`); running `bash run.sh` "
+                 "produces `out/final.png`. Modify this program as requested below, and leave everything else unchanged:")
+    else:
+        intro = "Draw the following image with code:"
+    return f"""# Task
 
-用代码画一张图，内容如下：
+{intro}
 
 > {task["prompt"][0]["content"]}
 
-## 交付（路径固定）
+## Deliverables (fixed paths)
 
-- `/workspace/out/final.png`：最终图，尺寸 {size[0]}×{size[1]}
-- `/workspace/src/`：生成它的全部代码
-- `/workspace/run.sh`：一条命令，在干净环境里从头重新生成 `out/final.png`
+- `/workspace/out/final.png`: the final image, {size[0]}×{size[1]} pixels
+- `/workspace/src/`: all the code that produces it
+- `/workspace/run.sh`: one command that regenerates `out/final.png` from scratch in a clean environment
 
-## 规则
+## Rules
 
-- 只能用代码画。不能调用任何图像生成模型或神经网络，不能加载预训练权重。
-- 不能联网下载任何东西，不能读取环境里现成的图片或素材，不能把位图（比如 base64 图片）嵌进代码。
+- Draw with code only. Do not call any image-generation model or neural network, and do not load pretrained weights.
+- Do not download anything from the internet, do not read existing images or assets in the environment, and do not embed bitmaps (such as base64 images) in your code.
 - {look}
-- 预算：约 {t["tokens"] // 10000} 万 token、{t["minutes"]} 分钟，超出会被直接停止，只保留停止时已有的文件。
+- Budget: about {t["tokens"]:,} tokens and {t["minutes"]} minutes. If you exceed either, the run is stopped and only the files present at that moment are kept.
 
-## 环境
+## Environment
 
-- Python（/opt/venv）：numpy、scipy、pillow、matplotlib、scikit-image、opencv、shapely、cairosvg、pycairo、playwright
-- Node：three、playwright（`NODE_PATH` 已设好）
-- `c2p-render in.svg|in.html out.png --width W --height H [--wait-ms N]`：用 headless Chromium（支持 WebGL）把 SVG 或 HTML 渲染成 PNG。
-  页面里可以直接 `import * as THREE from "/opt/node/node_modules/three/build/three.module.js"`；异步绘制完成后设 `window.C2P_READY = true`。
-- Blender 4.0（`blender -b -P script.py`）：用 Cycles 时要设 `scene.cycles.use_denoising = False`（这个版本没有降噪库）。
-- `rsvg-convert`、ImageMagick、中文字体（Noto CJK）
+- Python (/opt/venv): numpy, scipy, pillow, matplotlib, scikit-image, opencv, shapely, cairosvg, pycairo, playwright
+- Node: three, playwright (`NODE_PATH` is set)
+- `c2p-render in.svg|in.html out.png --width W --height H [--wait-ms N]`: renders SVG or HTML to PNG with headless Chromium (WebGL supported).
+  Pages can `import * as THREE from "/opt/node/node_modules/three/build/three.module.js"`; set `window.C2P_READY = true` when asynchronous drawing is done.
+- Blender 4.0 (`blender -b -P script.py`): with Cycles, set `scene.cycles.use_denoising = False` (this build has no denoiser).
+- `rsvg-convert`, ImageMagick, CJK fonts (Noto CJK)
 """
-
 
 REDTEAM_TEXT = """
 ## 红队测试（这一次的特殊要求）
@@ -250,6 +256,10 @@ def main():
     (ws / "src").mkdir()
     text = task_text(task, a.tier) + (REDTEAM_TEXT if a.redteam else "")
     (ws / "TASK.md").write_text(text, encoding="utf-8")
+    if task["extra_info"].get("edit_base"):   # 精确修改题：把底稿程序放进工作区
+        base = pathlib.Path(a.tasks_file).parent / task["extra_info"]["edit_base"]
+        shutil.copytree(base / "src", ws / "src", dirs_exist_ok=True)
+        shutil.copy(base / "run.sh", ws / "run.sh")
     os.chmod(ws, 0o777)
     for p in ws.rglob("*"):
         os.chmod(p, 0o777 if p.is_dir() else 0o666)
@@ -264,7 +274,7 @@ def main():
         os.chmod(run / "trace", 0o777)
         mounts += ["-v", f"{run / 'trace'}:/trace"]
     codex_home = None
-    prompt = "请阅读 /workspace/TASK.md，按要求完成任务。"
+    prompt = "Read /workspace/TASK.md and complete the task as described."
 
     if a.agent == "claude":
         token = "".join((SECRETS / "claude_token").read_text().split())   # 复制时终端折行会混进换行

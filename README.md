@@ -42,7 +42,7 @@
 
 1. 环境和 harness：统一 Docker 镜像、出口代理、用现成的 Claude Code 和 Codex 跑题，上限强制执行（已验收；amd64 镜像待建，见 [docs/PHASE1.md](docs/PHASE1.md)）
 2. 门槛：路径校验、断网重跑比对、静态扫描、strace 跟踪重跑和作答过程、程序化约束框架；15 个手写对抗样本全部判不过，已有作品没有误判（见 [docs/PHASE2.md](docs/PHASE2.md)）
-3. 题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题
+3. 题库 v0：dev 150 题（常规 100 + 代码该赢 50，32 题改写自 X 上的真实 prompt），细则两个模型交叉检查、人工抽查（进行中，见 [docs/PHASE3.md](docs/PHASE3.md)）
 4. VLM 裁判：逐条细则、图池两两比较与 Elo、读代码的 grader
 5. 生图模型基线进图池
 6. 验证评测：3 个模型 × 2 个 effort × 3 个种子，人工读样本和两两比较
@@ -68,7 +68,7 @@ demo/            试跑：prompts.json（题目）、RULES.md（规则）、A/ B
 qianli/          前期探索：first_attempt/ 从零画千里江山图；fit/ 给参考图用三角形 SVG 复刻
 autoresearch/    agent 自动优化三角形拟合算法（SSIM 0.764 → 0.818，58 秒 → 26 秒）
 stylize/         照片风格化工具（水墨、水彩、油画等，传统算法 + C 内核，无神经网络）
-docs/            PLAN.md：设计与实现方案；PHASE1.md：阶段 1 进度和验收；PHASE2.md：阶段 2 门槛
+docs/            PLAN.md：设计与实现方案；PHASE1.md：阶段 1 进度和验收；PHASE2.md：阶段 2 门槛；PHASE3.md：阶段 3 题库
 env/             统一 Docker 镜像（Dockerfile、c2p-render）、出口代理（proxy/）、门槛镜像（gate/，加了 strace）
 harness/         run.py：在镜像里跑 Claude Code 或 Codex、监控预算、收集产出；batch.sh：批量运行；
                  check.py：断网重跑比对和汇总；gate.py：门槛；gate_validate.py：门槛自检；
