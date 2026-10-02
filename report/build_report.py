@@ -223,7 +223,7 @@ TEMPLATE = """<!doctype html>
 <tr><td>0</td><td>试跑（已完成）</td><td>24 张图、结论和局限都在本报告里</td></tr>
 <tr><td>1</td><td>环境和 harness（进行中）：统一 Docker 镜像（Python、Node + Three.js、headless Chromium、Blender、中文字体）；出口代理只放行模型服务；直接用现成的 Claude Code 和 Codex 跑题；上限强制执行；卡住和电脑睡眠检测；日志</td><td>3 题 × 2 个 agent 跑通各档（已完成：18 次全部在上限内完成，全部逐像素复现，见 <a href="{gh}docs/PHASE1.md" target=_blank rel=noopener>docs/PHASE1.md</a>）；amd64 镜像待建</td></tr>
 <tr><td>2</td><td>门槛：输出路径校验、断网重跑比对、静态扫描、运行时检查（strace 跟踪重跑和作答过程）、程序化约束</td><td>对抗样本全部判 0；试跑里正常的图全部通过（已完成：手写对抗样本 15/15 判不过，已有作品没有误判，见 <a href="{gh}docs/PHASE2.md" target=_blank rel=noopener>docs/PHASE2.md</a>）</td></tr>
-<tr><td>3</td><td>题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题</td><td>每题有来源、类别和人判的难度</td></tr>
+<tr><td>3</td><td>题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题</td><td>每题有来源、类别和人判的难度（已完成 v0：常规 100 + 代码该赢 50，32 题改写自 X 上的真实 prompt；细则由两个模型交叉检查、subagent 复审，还没有人逐条核对；精确修改题的修改框用真实修改验证过。见 <a href="{gh}docs/PHASE3.md" target=_blank rel=noopener>docs/PHASE3.md</a>）</td></tr>
 <tr><td>4</td><td>VLM 裁判：逐条细则；图池两两比较（位置平衡、Elo）；读代码的 grader</td><td>judge 两次判定不一致的比例低于 5%</td></tr>
 <tr><td>5</td><td>生图模型基线：2–3 个生图模型画 dev 全部题，放进图池</td><td>图池覆盖 dev 全部题</td></tr>
 <tr><td>6</td><td>验证评测：3 个模型 × 2 个 effort × 3 个种子；人工读 50 个样本；人工两两比较</td><td>评测自检全部通过</td></tr>

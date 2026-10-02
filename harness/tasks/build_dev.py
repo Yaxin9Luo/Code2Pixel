@@ -17,7 +17,7 @@ X = "https://x.com/"
 T = [
     # ---------------- 风景 landscape
     ("landscape", "", L, "medium", "A Japanese cherry-blossom valley in spring: a river winding between hills covered in pink blossoms, a small wooden bridge, and distant mountains in soft haze.", "春天的日式樱花山谷：河流在开满粉色樱花的山丘间蜿蜒，一座小木桥，远山笼在薄雾里。", X + "dotey/status/2102565403109085669", "原帖要求可交互 3D 网页，改为静态画面"),
-    ("landscape", "", L, "hard", "The surface of an alien planet: violet sky with two moons, strange crystalline rock formations, a small spaceship parked on a ridge, and a ringed planet on the horizon.", "外星球地表：紫色天空挂着两个月亮，奇形怪状的晶体岩石，一艘小飞船停在山脊上，地平线上有一颗带环的行星。", X + "jurlycat/status/2104370348632543325", "原帖是可飞行的 3D 原型，改为静态画面"),
+    ("landscape", "", L, "medium", "The surface of an alien planet: violet sky with two moons, strange crystalline rock formations, a small spaceship parked on a ridge, and a ringed planet on the horizon.", "外星球地表：紫色天空挂着两个月亮，奇形怪状的晶体岩石，一艘小飞船停在山脊上，地平线上有一颗带环的行星。", X + "jurlycat/status/2104370348632543325", "原帖是可飞行的 3D 原型，改为静态画面"),
     ("landscape", "", L, "medium", "A small sailing boat climbing a large ocean wave under a stormy sky, with spray and foam at the wave crest.", "暴风雨天空下，一艘小帆船正爬上一道巨浪，浪尖有飞沫和白色泡沫。", X + "justusfaugust/status/1929459559669575823", "原题 Create an SVG of a boat on an ocean wave"),
     ("landscape", "", L, "medium", "A realistic open ocean at golden hour seen from just above the water: rolling swells, sun glitter on the surface, and a few distant clouds.", "黄金时刻、贴近海面看到的开阔大海：起伏的涌浪，阳光在水面闪烁，远处几朵云。", X + "dangreenheck/status/2102911556296052788", "原帖是 three.js 海洋模拟，改为静态画面"),
     ("landscape", "", L, "easy", "Snow-capped mountains at sunset above a calm alpine lake, with the mountains reflected in the water.", "日落时的雪山湖泊，湖面倒映着山影。", None, "试跑 pilot-02"),
@@ -85,7 +85,7 @@ T = [
     ("still_life", "", L, "medium", "A collection of seashells, a starfish, and a piece of driftwood arranged on sand.", "沙子上摆着一组贝壳、一只海星和一块漂流木。", None, ""),
     ("still_life", "", S, "easy", "A stack of three old books with a red apple on top, against a plain grey wall.", "三本旧书摞在一起，顶上放着一个红苹果，背景是素灰色的墙。", None, ""),
     ("still_life", "", L, "medium", "A Chinese tea set on a bamboo tray: a clay teapot, four small cups, steam rising, and a few tea leaves scattered.", "竹茶盘上的一套中式茶具：一把紫砂壶、四只小杯，热气升起，散落着几片茶叶。", None, ""),
-    ("still_life", "", S, "medium", "A slice of strawberry cake on a plate with a fork, layers of cream and sponge visible in the cut side.", "盘子里一块草莓蛋糕和一把叉子，切面能看到奶油和蛋糕的分层。", None, ""),
+    ("still_life", "", S, "easy", "A slice of strawberry cake on a plate with a fork, layers of cream and sponge visible in the cut side.", "盘子里一块草莓蛋糕和一把叉子，切面能看到奶油和蛋糕的分层。", None, ""),
     ("still_life", "", L, "medium", "An old film camera, a roll of film, and a few printed photographs scattered on a wooden table.", "木桌上一台老式胶片相机、一卷胶卷和几张散开的冲印照片。", None, ""),
     ("still_life", "", S, "hard", "A transparent glass sphere on a checkered floor, showing the checkered pattern refracted and inverted inside it.", "棋盘格地板上一个透明玻璃球，球里能看到被折射、上下颠倒的棋盘格。", None, ""),
     ("still_life", "", L, "easy", "A potted succulent garden on a sunny windowsill: five different small succulents in terracotta pots.", "阳光照着的窗台上摆着一组多肉：五种不同的小多肉，种在陶土盆里。", None, ""),
@@ -104,7 +104,7 @@ T = [
     ("multi_object", "", L, "hard", "A busy workbench of a clockmaker: clocks of different shapes on the wall, tools, a magnifying lamp, and an open clock with its parts laid out.", "钟表匠忙碌的工作台：墙上挂着各种形状的钟，工具、放大镜台灯，一只拆开的钟和摊开的零件。", None, ""),
     ("multi_object", "", L, "medium", "A children's playground in the afternoon: a slide, swings, a sandbox with a bucket and spade, a seesaw, and a bench with a parent.", "午后的儿童游乐场：滑梯、秋千、放着小桶和铲子的沙坑、跷跷板，长椅上坐着一位家长。", None, ""),
     ("multi_object", "", L, "medium", "A cross-section of an ant colony underground: tunnels, chambers with eggs, ants carrying leaves, and a grassy surface above.", "地下蚂蚁窝的剖面：隧道、放着卵的巢室、搬运叶子的蚂蚁，上方是长草的地面。", None, ""),
-    ("multi_object", "", L, "hard", "A space-themed food universe: planets made of a donut, a watermelon, a pizza and a cookie orbiting a sun made of an orange, with a small rocket.", "以食物为主题的宇宙：甜甜圈、西瓜、披萨和饼干做成的行星围绕一颗橙子做的太阳转，还有一枚小火箭。", X + "fourwo0od/status/2089663831358443765", "原帖是太空探索 demo 改成的食物宇宙"),
+    ("multi_object", "", L, "medium", "A space-themed food universe: planets made of a donut, a watermelon, a pizza and a cookie orbiting a sun made of an orange, with a small rocket.", "以食物为主题的宇宙：甜甜圈、西瓜、披萨和饼干做成的行星围绕一颗橙子做的太阳转，还有一枚小火箭。", X + "fourwo0od/status/2089663831358443765", "原帖是太空探索 demo 改成的食物宇宙"),
     ("multi_object", "", L, "medium", "A cozy bookstore interior: tall wooden shelves, a rolling ladder, a cat sleeping on a stack of books, and a reading armchair with a lamp.", "温馨的书店内部：高高的木书架、一架带轮子的梯子、一只猫睡在一摞书上，还有一张配台灯的阅读扶手椅。", None, ""),
     # ---------------- 指定画风 style
     ("style", "ink", L, "medium", "A Chinese ink-wash painting: a lone boat under the moon, a fisherman, distant mountains, reeds, with a red seal stamp.", "水墨画：月下孤舟，一位渔翁，远山，芦苇，带一枚红色印章。", None, "试跑 pilot-10"),
@@ -152,7 +152,7 @@ TEXT = [
     ("easy", S, 'A birthday card with "Happy Birthday, Mia!" written in playful lettering, surrounded by balloons.', '一张生日贺卡，用活泼的字体写着 "Happy Birthday, Mia!"，四周有气球。'),
     ("hard", L, "A neon sign on a brick wall that reads OPEN 24 HOURS, with the letter U flickering off (dark) while the rest glow pink.", "砖墙上一块霓虹灯牌写着 OPEN 24 HOURS，其中字母 U 不亮，其余字母发粉光。"),
     ("medium", P, 'A book cover with the title "The Quiet Orbit" and the author name "L. Moreau", showing a small planet and a moon.', '一本书的封面：书名 "The Quiet Orbit"，作者 "L. Moreau"，画着一颗小行星和一个月亮。'),
-    ("hard", L, 'A train station departure board listing three trains: "08:15 Lyon", "08:40 Geneva", "09:05 Milan".', '火车站的发车显示屏上列出三班车："08:15 Lyon"、"08:40 Geneva"、"09:05 Milan"。'),
+    ("medium", L, 'A train station departure board listing three trains: "08:15 Lyon", "08:40 Geneva", "09:05 Milan".', '火车站的发车显示屏上列出三班车："08:15 Lyon"、"08:40 Geneva"、"09:05 Milan"。'),
     ("medium", S, 'A square app icon for a weather app: a stylized white cloud with a small sun, on a blue gradient, with rounded corners, and the word "Nimbus" written under the cloud.', '一个天气 App 的方形图标：风格化的白云配一个小太阳，蓝色渐变底，圆角，云下方写着 "Nimbus"。'),
 ]
 # ---------------- 代码该赢：几何布局（能程序检查的写进 checks）
@@ -175,7 +175,7 @@ LAYOUT = [
      [{"type": "region_color", "box": [0.45, 0.45, 0.95, 0.95], "rgb": [135, 206, 235], "tol": 50}]),
     ("medium", L, "A landscape split exactly in half vertically: the left half is a summer scene with green trees, the right half the same scene in winter with snow.", "一幅从中间竖着正好一分为二的风景：左半边是夏天、绿树，右半边是同一处风景的冬天、积雪。", None),
     ("hard", L, "A solar system diagram with the Sun on the far left and the eight planets in the correct order to the right, with Saturn's rings and Jupiter visibly the largest planet.", "太阳系示意图：太阳在最左边，八大行星按正确顺序向右排开，土星有环，木星明显最大。", None),
-    ("medium", S, "Five concentric circles alternating red and white, centered on the canvas like a target.", "五个同心圆红白相间，居中排布，像一个靶子。",
+    ("easy", S, "Five concentric circles alternating red and white, with a red center, centered on the canvas like a target.", "五个同心圆红白相间，中心是红色，居中排布，像一个靶子。",
      [{"type": "region_color", "box": [0.47, 0.47, 0.53, 0.53], "rgb": [220, 20, 30], "tol": 80}]),
     ("medium", L, "A city skyline silhouette in black against an orange sky, where the tallest building is exactly in the center of the image.", "橙色天空下的黑色城市天际线剪影，最高的楼正好在画面中央。", None),
 ]
@@ -184,9 +184,9 @@ LAYOUT = [
 # (底稿, 难度, 英文, 中文, edit_box)。底稿在 edit_bases/，参考图由 build_edit_refs.py 生成
 EDIT = [
     ("pilot-11_codex_low", "medium", "Turn the sun into a crescent moon of about the same size, in the same place. Change nothing else.", "把太阳改成大小差不多、位置不变的一弯新月。别的都不要改。", [0.10, 0.08, 0.32, 0.36]),
-    ("pilot-11_codex_low", "easy", "Change the two red flags on top of the castle to blue. Change nothing else.", "把城堡顶上的两面红旗改成蓝色。别的都不要改。", [0.60, 0.13, 0.73, 0.26]),
+    ("pilot-11_codex_low", "easy", "Change the two red flags on top of the castle to blue. Change nothing else.", "把城堡顶上的两面红旗改成蓝色。别的都不要改。", [0.60, 0.13, 0.765, 0.26]),
     ("pilot-11_claude_nolook", "easy", "Make the knight's red cape green. Change nothing else.", "把骑士的红披风改成绿色。别的都不要改。", [0.20, 0.64, 0.40, 0.98]),
-    ("pilot-11_claude_nolook", "medium", "Make the roof of the rightmost tower blue instead of red, matching the blue of the small turrets. Change nothing else.", "把最右边那座塔的红屋顶改成蓝色，和小塔楼的蓝色一致。别的都不要改。", [0.70, 0.15, 0.90, 0.33]),
+    ("pilot-11_claude_nolook", "medium", "Make the roof of the rightmost tower blue instead of red, matching the blue of the small turrets. Change nothing else.", "把最右边那座塔的红屋顶改成蓝色，和小塔楼的蓝色一致。别的都不要改。", [0.70, 0.15, 0.90, 0.37]),
     ("pilot-11_claude_low", "medium", "Remove the setting sun, leaving the sky and hills behind it. Change nothing else.", "去掉正在落下的太阳，原位置露出后面的天空和山。别的都不要改。", [0.12, 0.40, 0.34, 0.66]),
     ("pilot-11_claude_low", "easy", "Change the yellow flag on the left tower to red. Change nothing else.", "把左边塔上的黄旗改成红色。别的都不要改。", [0.41, 0.13, 0.50, 0.25]),
     ("pilot-10_codex_high", "medium", "Remove the boat and the boatman, leaving calm water in their place. Change nothing else.", "去掉小船和船夫，原位置只留平静的水面。别的都不要改。", [0.52, 0.62, 0.74, 0.84]),
