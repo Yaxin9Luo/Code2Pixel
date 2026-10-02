@@ -26,7 +26,7 @@
 | 数据格式 | 每条任务一行 `prompt` / `reward_model` / `extra_info`（任务 id、Docker 镜像）；统一渲染镜像，可直接接 verl |
 | 数据划分 | train 公开、自动出题；dev 公开、细则人工核对；test 不公开、人写细则、定期更换、不进训练。三份共用一套环境 |
 | 训练 vs 评测 | 训练：同题一组 rollout 组内比较给相对分（适合 GRPO）。评测：与生图模型和参考 agent 的固定图池比，报胜率或 Elo |
-| 防刷分 | 断网；静态扫描 + 运行时检查（base64 位图、下载图片、调生图模型、加载权重）；judge 只看像素并用对抗样本测试；作弊归零 |
+| 防刷分 | 断网；静态扫描 + 运行时检查（base64 位图、下载图片、调生图模型、加载权重）；重跑和 agent 作答全过程都用 strace 跟踪，读了现成图片就判违规；judge 只看像素并用对抗样本测试；作弊归零 |
 | 效率 | 每档报 token、轮数、时间；分数接近饱和时比同等质量下的成本 |
 | 评测自检 | 指标上线前要过：分数随模型能力和 effort 上升；最强模型离满分很远；多次运行的噪声小于要关心的差距（报置信区间）；judge 判两次结论稳定；对抗样本得 0 分。dev 涨而 test 不动视为过拟合 |
 
@@ -41,7 +41,7 @@
 完整方案见 [docs/PLAN.md](docs/PLAN.md)：任务和输出约定、题库、三层评分、评测自检、数据格式、实现步骤、还没定的问题。步骤概要：
 
 1. 环境和 harness：统一 Docker 镜像、出口代理、用现成的 Claude Code 和 Codex 跑题，上限强制执行（已验收；amd64 镜像待建，见 [docs/PHASE1.md](docs/PHASE1.md)）
-2. 门槛：路径校验、断网重跑比对、静态扫描、程序化约束，先用对抗样本测一遍
+2. 门槛：路径校验、断网重跑比对、静态扫描、strace 跟踪重跑和作答过程、程序化约束框架；15 个手写对抗样本全部判不过，已有作品没有误判（见 [docs/PHASE2.md](docs/PHASE2.md)）
 3. 题库 v0：dev 150 题，细则人工核对，"代码该赢"类至少 30 题
 4. VLM 裁判：逐条细则、图池两两比较与 Elo、读代码的 grader
 5. 生图模型基线进图池
@@ -68,10 +68,11 @@ demo/            试跑：prompts.json（题目）、RULES.md（规则）、A/ B
 qianli/          前期探索：first_attempt/ 从零画千里江山图；fit/ 给参考图用三角形 SVG 复刻
 autoresearch/    agent 自动优化三角形拟合算法（SSIM 0.764 → 0.818，58 秒 → 26 秒）
 stylize/         照片风格化工具（水墨、水彩、油画等，传统算法 + C 内核，无神经网络）
-docs/            PLAN.md：设计与实现方案；PHASE1.md：阶段 1 进度和验收
-env/             统一 Docker 镜像（Dockerfile、c2p-render）和出口代理（proxy/）
+docs/            PLAN.md：设计与实现方案；PHASE1.md：阶段 1 进度和验收；PHASE2.md：阶段 2 门槛
+env/             统一 Docker 镜像（Dockerfile、c2p-render）、出口代理（proxy/）、门槛镜像（gate/，加了 strace）
 harness/         run.py：在镜像里跑 Claude Code 或 Codex、监控预算、收集产出；batch.sh：批量运行；
-                 check.py：断网重跑比对和汇总；tasks/：题目
+                 check.py：断网重跑比对和汇总；gate.py：门槛；gate_validate.py：门槛自检；
+                 redteam/：手写对抗样本；tasks/：题目
 report/          报告 index.html 及生成脚本
 ```
 

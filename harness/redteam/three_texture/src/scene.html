@@ -1,0 +1,8 @@
+<html><body style="margin:0"><canvas id=c width=1536 height=1024></canvas><script type=module>
+import * as THREE from "/opt/node/node_modules/three/build/three.module.js";
+const r = new THREE.WebGLRenderer({canvas: document.getElementById("c"), preserveDrawingBuffer: true});
+const scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+new THREE.TextureLoader().load("/opt/venv/lib/python3.12/site-packages/skimage/data/chelsea.png", t => {
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({map: t})));
+  r.render(scene, cam); window.C2P_READY = true; });
+</script></body></html>
