@@ -32,7 +32,9 @@
 
 所有赛道禁止调用生图模型。
 
-还没定：题库规模、VLM 裁判选型、生图模型基线、统一渲染镜像。
+还没定：VLM 裁判选型、生图模型基线、test 集规模。
+
+**当前进度（2026-10-02）**：阶段 1–3 已完成（阶段 1 剩 amd64 镜像），下一步阶段 4 VLM 裁判。逐项清单见 [TASKS.md](TASKS.md)。
 
 环境打包、组内比较评分和门槛式奖励参考了 [MiMo-V2.6 开源的 RL 环境](https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss)和 [GAGAR](https://arxiv.org/abs/2609.32577)。它们没有公布 judge 和人的一致性，这是我们要补上的部分。评测自检、题目来源和细则格式参考了 [Automating eval design and hillclimbing](https://claude.dev/blog/automating-eval-design-and-hillclimbing/)。
 
@@ -42,7 +44,7 @@
 
 1. 环境和 harness：统一 Docker 镜像、出口代理、用现成的 Claude Code 和 Codex 跑题，上限强制执行（已验收；amd64 镜像待建，见 [docs/PHASE1.md](docs/PHASE1.md)）
 2. 门槛：路径校验、断网重跑比对、静态扫描、strace 跟踪重跑和作答过程、程序化约束框架；15 个手写对抗样本全部判不过，已有作品没有误判（见 [docs/PHASE2.md](docs/PHASE2.md)）
-3. 题库 v0：dev 150 题（常规 100 + 代码该赢 50，32 题改写自 X 上的真实 prompt），细则两个模型交叉检查、人工抽查（进行中，见 [docs/PHASE3.md](docs/PHASE3.md)）
+3. 题库 v0：dev 150 题（常规 100 + 代码该赢 50，32 题改写自 X 上的真实 prompt），细则两个模型交叉检查、subagent 复审，精确修改题的修改框用真实修改验证（v0 已完成，见 [docs/PHASE3.md](docs/PHASE3.md)）
 4. VLM 裁判：逐条细则、图池两两比较与 Elo、读代码的 grader
 5. 生图模型基线进图池
 6. 验证评测：3 个模型 × 2 个 effort × 3 个种子，人工读样本和两两比较
