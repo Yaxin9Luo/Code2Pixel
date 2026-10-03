@@ -130,6 +130,7 @@ spec（2026-10-02 和用户对齐）：
 - [x] 细则太容易满分：用户定"细则当门槛、两两比较当主分 + 加质量细则"；harness/score.py；题库加 893 条质量细则（kind 字段）；60 次重判
 - [x] 区分度验证：Claude Code + Sonnet 5 跑同样 30 题（runs/sonnet5/），两个裁判都排最后，Elo 低 300–450，区间不重叠
 - [x] batch.sh 支持 MODEL、RUNS_DIR；pairwise / score 按模型区分参赛者；judge.py 网络错误重试
-- [ ] 质量细则里没区分度的几条（光影一致、完成度、纵深、遮挡等）删掉或改具体
+- [x] 删没区分度的质量细则：先删 7 条，后全部恢复（Sonnet 5 的数据 + 样本太少、没测弱模型，用户定）；score.py 改成按细则文字对
+- [ ] 用更弱的模型 / 更低 effort 再测一轮，看每条质量细则的区分度
 - [ ] GLM-5.3-FlashX 配额下来后加进来
 - [x] docs/PHASE4.md、PLAN、README、报告

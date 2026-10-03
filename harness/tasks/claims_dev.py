@@ -180,6 +180,8 @@ COMMON = [("The image has no obvious rendering artifacts, glitches, or broken sh
 # 更难的质量细则（2026-10-02 用户定"细则当门槛、两两比较当主分，再加质量细则"）。
 # 阶段 4 实跑里原有细则大多只核对"有没有"，一张干净的扁平插画就能全部满足，60 次里 52 次满分。
 # 这些说法核对"做得好不好"：光影一致、纵深、材质、解剖结构、完成度。按类别加，精确修改题不加（画面是底稿的）。
+# 2026-10-03 一度删过 7 条看似没区分度的说法，后来全部恢复：光影一致、完成度、纵深能把 Sonnet 5 分出来；
+# 材质、遮挡、比例一致、文字清晰各只有 2–3 题、也没测过更弱的模型，证据不够，不删（用户定）。见 docs/PHASE4.md。
 QUALITY_ALL = [("Lighting is consistent across the scene: highlights and shadows agree on where the light comes from", Q),
                ("The image has a finished, professional level of detail rather than looking like simple placeholder shapes", Q)]
 QUALITY = {

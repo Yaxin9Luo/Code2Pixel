@@ -30,12 +30,14 @@ def claim_scores(run, model, tasks):
     js = [json.loads(f.read_text()) for f in files]
     if any("claims" not in j for j in js):
         return 0.0, 0.0   # 没交图，细则全算没满足
-    rounds = [j["claims"] for j in js]
     task = tasks[json.loads((run / "result.json").read_text())["task_id"]]
+    texts = [c["text"] for c in task["reward_model"]["claims"]]
     kinds = [c.get("kind", "requirement" if c["weight"] == 2 else "quality") for c in task["reward_model"]["claims"]]
-    if any(len(r) != len(kinds) for r in rounds):
-        return None   # 旧细则判的，对不上
-    yes = [sum(r[i]["yes"] for r in rounds) / len(rounds) for i in range(len(kinds))]
+    # 按细则文字对：题库删掉的细则忽略；题库里有、裁判没判过的，说明是旧细则判的，不算
+    rounds = [{c["text"]: c["yes"] for c in j["claims"]} for j in js]
+    if any(tx not in r for r in rounds for tx in texts):
+        return None
+    yes = [sum(r[tx] for r in rounds) / len(rounds) for tx in texts]
     w = [c["weight"] for c in task["reward_model"]["claims"]]
     req = [i for i, k in enumerate(kinds) if k == "requirement"]
     qual = [i for i, k in enumerate(kinds) if k == "quality"]
