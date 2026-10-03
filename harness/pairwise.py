@@ -31,7 +31,7 @@ Use "tie" only if they are genuinely equal."""
 def entrant(run):
     res = json.loads((run / "result.json").read_text())
     gate = json.loads((run / "gate.json").read_text()) if (run / "gate.json").exists() else {}
-    return {"run": run.name, "task_id": res["task_id"], "who": f"{res['agent']}/{res.get('tier', '')}",
+    return {"run": run.name, "task_id": res["task_id"], "who": f"{res['agent']}:{res.get('model')}/{res.get('tier', '')}",
             "image": run / "workspace" / "out" / "final.png", "gate_pass": gate.get("pass")}
 
 

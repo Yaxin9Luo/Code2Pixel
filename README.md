@@ -34,7 +34,7 @@
 
 还没定：VLM 裁判选型、生图模型基线、test 集规模。
 
-**当前进度（2026-10-03）**：阶段 1–3 已完成（阶段 1 剩 amd64 镜像）；阶段 4 VLM 裁判进行中：裁判、两两比较、读代码、对抗测试和标注页都已做好，在 60 次实跑上跑过，等人工标注定一致率（见 [docs/PHASE4.md](docs/PHASE4.md)）。逐项清单见 [TASKS.md](TASKS.md)。
+**当前进度（2026-10-03）**：阶段 1–3 已完成（阶段 1 剩 amd64 镜像）；阶段 4 VLM 裁判进行中：裁判、两两比较、读代码、对抗测试和标注页都已做好，在 60 次实跑上跑过；加 Sonnet 5 验证过区分度（两个裁判都把它排在 Opus、Codex 之后，Elo 低 300–450），Opus 和 Codex 谁强等人工标注定（见 [docs/PHASE4.md](docs/PHASE4.md)）。逐项清单见 [TASKS.md](TASKS.md)。
 
 环境打包、组内比较评分和门槛式奖励参考了 [MiMo-V2.6 开源的 RL 环境](https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss)和 [GAGAR](https://arxiv.org/abs/2609.32577)。它们没有公布 judge 和人的一致性，这是我们要补上的部分。评测自检、题目来源和细则格式参考了 [Automating eval design and hillclimbing](https://claude.dev/blog/automating-eval-design-and-hillclimbing/)。
 

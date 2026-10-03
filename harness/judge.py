@@ -12,6 +12,7 @@
 """
 import argparse
 import base64
+import http.client
 import io
 import json
 import pathlib
@@ -77,8 +78,8 @@ def call(model, messages, temperature=0.0, retries=6):
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             err = f"HTTP {e.code}: {e.read()[:500].decode(errors='replace')}"
-        except (urllib.error.URLError, TimeoutError) as e:
-            err = repr(e)
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, http.client.HTTPException) as e:
+            err = repr(e)   # 连接被重置、半截断开这类网络问题也重试
         time.sleep(20 * (i + 1))
     raise RuntimeError(err)
 

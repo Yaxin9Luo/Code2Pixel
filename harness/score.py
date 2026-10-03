@@ -27,7 +27,10 @@ def claim_scores(run, model, tasks):
     files = sorted((run / "judge").glob(f"{model}_r*.json"))
     if not files:
         return None
-    rounds = [json.loads(f.read_text())["claims"] for f in files]
+    js = [json.loads(f.read_text()) for f in files]
+    if any("claims" not in j for j in js):
+        return 0.0, 0.0   # 没交图，细则全算没满足
+    rounds = [j["claims"] for j in js]
     task = tasks[json.loads((run / "result.json").read_text())["task_id"]]
     kinds = [c.get("kind", "requirement" if c["weight"] == 2 else "quality") for c in task["reward_model"]["claims"]]
     if any(len(r) != len(kinds) for r in rounds):
@@ -53,7 +56,7 @@ def main():
     for r in runs:
         res = json.loads((r / "result.json").read_text())
         g = json.loads((r / "gate.json").read_text()) if (r / "gate.json").exists() else {"pass": False}
-        info[r.name] = {"who": f"{res['agent']}/{res['tier']}", "task": res["task_id"], "gate": bool(g.get("pass")), "run": r}
+        info[r.name] = {"who": f"{res['agent']}:{res.get('model')}/{res['tier']}", "task": res["task_id"], "gate": bool(g.get("pass")), "run": r}
     out = {"min_req": a.min_req, "models": {}}
     for m in a.models:
         per = collections.defaultdict(lambda: {"n": 0, "gate": 0, "req_ok": 0, "R": [], "Q": []})

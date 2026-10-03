@@ -128,6 +128,8 @@ spec（2026-10-02 和用户对齐）：
 - [ ] 等人工标注（目前 1 人、1 张图 + 8 组）
 - [x] 一致率汇总脚本（harness/agreement.py）
 - [x] 细则太容易满分：用户定"细则当门槛、两两比较当主分 + 加质量细则"；harness/score.py；题库加 893 条质量细则（kind 字段）；60 次重判
+- [x] 区分度验证：Claude Code + Sonnet 5 跑同样 30 题（runs/sonnet5/），两个裁判都排最后，Elo 低 300–450，区间不重叠
+- [x] batch.sh 支持 MODEL、RUNS_DIR；pairwise / score 按模型区分参赛者；judge.py 网络错误重试
 - [ ] 质量细则里没区分度的几条（光影一致、完成度、纵深、遮挡等）删掉或改具体
 - [ ] GLM-5.3-FlashX 配额下来后加进来
 - [x] docs/PHASE4.md、PLAN、README、报告
