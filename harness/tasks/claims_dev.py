@@ -176,3 +176,37 @@ CLAIMS.update({
 # 每题都加的通用质量细则
 COMMON = [("The image has no obvious rendering artifacts, glitches, or broken shapes", Q),
           ("The image has a clear main subject and a readable composition", Q)]
+
+# 更难的质量细则（2026-10-02 用户定"细则当门槛、两两比较当主分，再加质量细则"）。
+# 阶段 4 实跑里原有细则大多只核对"有没有"，一张干净的扁平插画就能全部满足，60 次里 52 次满分。
+# 这些说法核对"做得好不好"：光影一致、纵深、材质、解剖结构、完成度。按类别加，精确修改题不加（画面是底稿的）。
+QUALITY_ALL = [("Lighting is consistent across the scene: highlights and shadows agree on where the light comes from", Q),
+               ("The image has a finished, professional level of detail rather than looking like simple placeholder shapes", Q)]
+QUALITY = {
+    "landscape": [("Depth reads convincingly: distant elements are smaller, softer or hazier than near ones", Q),
+                  ("Surfaces such as foliage, rock, water or sky have believable texture rather than flat uniform fills", Q)],
+    "street": [("Buildings and the street follow a consistent perspective", Q),
+               ("Surfaces such as walls, pavement, glass or signs have believable texture rather than flat uniform fills", Q)],
+    "animal": [("The animal's anatomy is correct for its species: proportions, limbs, eyes and ears look right", Q),
+               ("Fur, feathers or skin are rendered with visible texture rather than flat fills", Q)],
+    "people": [("Faces are well formed: eyes, nose and mouth are correctly placed and proportioned", Q),
+               ("Any visible hands have a plausible shape and number of fingers (yes if no hands are visible)", Q),
+               ("Body proportions and poses are anatomically plausible", Q)],
+    "still_life": [("Different materials are distinguishable: glass, metal, fabric, wood or food each look like their material", Q),
+                   ("Objects cast shadows or contact shadows that ground them on the surface they rest on", Q)],
+    "multi_object": [("All objects share a consistent scale and perspective", Q),
+                     ("Where objects overlap, the nearer one correctly hides the farther one (yes if nothing overlaps)", Q)],
+    "style": [("The style is executed convincingly with techniques characteristic of it (brushwork, palette, line quality), "
+               "not just a generic filter look", Q)],
+    "count": [("Shapes have clean edges with no stray marks, gaps or misalignments", Q)],
+    "layout": [("Shapes have clean edges with no stray marks, gaps or misalignments", Q)],
+    "text": [("All text is crisp and legible with even letter spacing and no malformed characters", Q)],
+}
+
+
+def quality_claims(category, subtype):
+    """一道题要加的质量细则；精确修改题不加。"""
+    if subtype == "edit":
+        return []
+    key = subtype if category == "code_wins" else category
+    return QUALITY_ALL + QUALITY.get(key, [])

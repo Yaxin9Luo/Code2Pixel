@@ -232,9 +232,12 @@ def main():
                   "tol": 12, "max_frac": 0.002}])
         r["extra_info"]["edit_base"] = f"edit_bases/{base}"
         rows.append(r)
-    from claims_dev import CLAIMS, COMMON   # 细则初稿，见 claims_dev.py
+    from claims_dev import CLAIMS, COMMON, quality_claims   # 细则，见 claims_dev.py
     for r in rows:
-        r["reward_model"]["claims"] = [{"text": t, "weight": w} for t, w in CLAIMS[r["extra_info"]["task_id"]] + COMMON]
+        e = r["extra_info"]
+        # 权重 2 是题目明确要求的（kind=requirement，当门槛）；权重 1 是质量（kind=quality，单独报告）
+        cs = CLAIMS[e["task_id"]] + COMMON + quality_claims(e["category"], e["subtype"])
+        r["reward_model"]["claims"] = [{"text": t, "weight": w, "kind": "requirement" if w == 2 else "quality"} for t, w in cs]
     out = pathlib.Path(__file__).with_name("dev.jsonl")
     out.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
     print(f"{len(rows)} 题 → {out}")
