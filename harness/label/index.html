@@ -1,0 +1,303 @@
+<title>Code2Pixel 标注台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* 布局：左边大图（修改题时原图和结果并排），右边题目和逐条判断；比较模式下两图并排、按钮在下 */
+:root {
+  --bg: #eef0f3; --panel: #ffffff; --ink: #1b2330; --muted: #5d6878; --line: #d6dbe3;
+  --accent: #2f55d4; --accent-ink: #ffffff; --yes: #1f8a4c; --yes-bg: #e3f4ea; --no: #c2412d; --no-bg: #fbe7e3;
+  --chip: #e4e8f0;
+  --display: "Sora", "Noto Sans SC", system-ui, sans-serif;
+  --body: "Noto Sans SC", system-ui, -apple-system, "PingFang SC", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161d; --panel: #1a2029; --ink: #e6eaf0; --muted: #98a3b3; --line: #2c3440;
+  --accent: #7d9bff; --accent-ink: #0d1220; --yes: #5fd08e; --yes-bg: #173726; --no: #ff8a74; --no-bg: #3d1e19; --chip: #252d39;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161d; --panel: #1a2029; --ink: #e6eaf0; --muted: #98a3b3; --line: #2c3440;
+  --accent: #7d9bff; --accent-ink: #0d1220; --yes: #5fd08e; --yes-bg: #173726; --no: #ff8a74; --no-bg: #3d1e19; --chip: #252d39;
+  color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 16px 40px; display: grid; gap: 14px; }
+header { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 1.35rem; margin: 0; letter-spacing: .01em; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.status { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+.notice { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; color: var(--muted); }
+.notice b { color: var(--ink) }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.bar .grow { flex: 1 1 200px; min-width: 0 }
+.meter { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+.btn { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+.btn:hover { border-color: var(--accent) }
+.btn:disabled { opacity: .45; cursor: default }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage { display: grid; grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.imgs { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+figure img { display: block; width: 100%; height: auto; max-height: 72vh; object-fit: contain; background: var(--chip); cursor: zoom-in; }
+figcaption { font-size: .8rem; color: var(--muted); padding: 6px 10px; display: flex; justify-content: space-between; gap: 8px; }
+.side { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px; min-width: 0; }
+.prompt { font-size: 1rem; margin: 0; }
+.prompt-zh { color: var(--muted); margin: 0; }
+.label { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-family: var(--mono); }
+.claims { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.claim { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
+.claim.y { background: var(--yes-bg); border-color: var(--yes); }
+.claim.n { background: var(--no-bg); border-color: var(--no); }
+.claim .k { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+.claim .w { font-family: var(--mono); font-size: .7rem; color: var(--muted); margin-left: 6px; }
+.yn { display: flex; gap: 4px; }
+.yn button { font: inherit; font-size: .85rem; min-width: 3rem; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.yn button.on-y { background: var(--yes); border-color: var(--yes); color: var(--panel); }
+.yn button.on-n { background: var(--no); border-color: var(--no); color: var(--panel); }
+.help { font-size: .8rem; color: var(--muted); }
+.pairbtns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.pairbtns .btn { min-width: 9rem; padding: 10px 14px; }
+.pairbtns .btn.sel { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.zoom { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: grid; place-items: center; z-index: 10; cursor: zoom-out; padding: 16px; }
+.zoom img { max-width: 100%; max-height: 100%; }
+kbd { font-family: var(--mono); font-size: .75rem; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; background: var(--chip); }
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Code2Pixel 标注台</h1>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-claims" aria-selected="true">逐条细则</button>
+      <button class="tab" role="tab" id="tab-pairs" aria-selected="false">两张比较</button>
+      <button class="tab" role="tab" id="tab-guide" aria-selected="false">说明</button>
+    </div>
+    <span class="status" id="status">连接中…</span>
+  </header>
+
+  <div class="notice" id="guide" hidden>
+    <p><b>这是做什么的。</b>Code2Pixel 让 coding agent 只写代码画图。VLM 裁判会对每张图逐条判“是 / 否”。这里收集人的判断，用来算裁判和人的一致率。</p>
+    <p><b>逐条细则。</b>每条说法只看图回答：看得出来就选“是”，看不出来或拿不准就选“否”。不用考虑图是怎么做出来的。精确修改题会并排给出原图，说法里的“原来的”指原图。快捷键：<kbd>1</kbd>–<kbd>9</kbd> 选中第几条，<kbd>Y</kbd> / <kbd>N</kbd> 判是否，<kbd>→</kbd> / <kbd>←</kbd> 换题。</p>
+    <p><b>两张比较。</b>同一道题的两张图，选整体更好的一张：先看是否满足题目，再看画面质量（形状、光影、透视、有没有破绽），最后看好不好看。确实分不出才选“差不多”。快捷键：<kbd>A</kbd> 左边，<kbd>S</kbd> 差不多，<kbd>D</kbd> 右边。</p>
+    <p><b>互不可见。</b>每个人的答案只有自己和发起人看得到，请独立判断，不要和别人讨论具体题目。作者（哪个 agent 画的）一律隐去。</p>
+  </div>
+
+  <div class="notice" id="empty" hidden>还没有题目。发起人会把画好的图陆续加进来，加好后这里会自动出现。</div>
+  <div class="notice" id="readonly" hidden>你现在只能查看。要参与标注，请让发起人把你的权限设为 Contributor（参与者）。</div>
+
+  <section id="claims-view" hidden>
+    <div class="bar">
+      <button class="btn" id="c-prev">← 上一题</button>
+      <div class="grow"><div class="meter"><i id="c-meter"></i></div></div>
+      <span class="status" id="c-count"></span>
+      <button class="btn" id="c-next-todo">下一道没做完的</button>
+      <button class="btn primary" id="c-next">下一题 →</button>
+    </div>
+    <div class="stage" style="margin-top:12px">
+      <div class="imgs" id="c-imgs"></div>
+      <div class="side">
+        <div><div class="label" id="c-id"></div><p class="prompt" id="c-prompt"></p><p class="prompt-zh" id="c-prompt-zh"></p></div>
+        <ul class="claims" id="c-list"></ul>
+        <div class="help">权重 2 是题目明确要求的内容，权重 1 是质量方面的；两种都只看图判断。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pairs-view" hidden>
+    <div class="bar">
+      <button class="btn" id="p-prev">← 上一组</button>
+      <div class="grow"><div class="meter"><i id="p-meter"></i></div></div>
+      <span class="status" id="p-count"></span>
+      <button class="btn primary" id="p-next">下一组 →</button>
+    </div>
+    <div class="side" style="margin-top:12px">
+      <div><div class="label" id="p-id"></div><p class="prompt" id="p-prompt"></p><p class="prompt-zh" id="p-prompt-zh"></p></div>
+    </div>
+    <div class="imgs" id="p-imgs" style="margin-top:12px"></div>
+    <div class="pairbtns" style="margin-top:12px">
+      <button class="btn" id="p-a">左边更好 <kbd>A</kbd></button>
+      <button class="btn" id="p-tie">差不多 <kbd>S</kbd></button>
+      <button class="btn" id="p-b">右边更好 <kbd>D</kbd></button>
+    </div>
+  </section>
+</div>
+<div class="zoom" id="zoom" hidden><img id="zoom-img" alt="放大的图"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const S = { items: [], pairs: [], mine: { claims: {}, pairs: {} }, uid: null, canWrite: true, tab: "claims", ci: 0, pi: 0, sel: 0, db: null };
+  const savedTab = (() => { try { return localStorage.getItem("c2p-tab") } catch (e) { return null } })();
+  if (savedTab === "pairs" || savedTab === "guide") S.tab = savedTab;
+
+  // 每个人看到的题目顺序不同（按用户 id 打乱），两张比较时左右位置也按人随机，抵消位置偏好
+  function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+  const order = arr => [...arr].sort((a, b) => hash(S.uid + a.id) - hash(S.uid + b.id));
+  const flip = p => hash(S.uid + "|" + p.id) % 2 === 1;
+
+  // 写入：每人一个文档，同一时间只发一次写，期间的改动合并到下一次
+  let writing = false, dirty = false;
+  async function save() {
+    if (!S.db || !S.uid || !S.canWrite) return;
+    if (writing) { dirty = true; return; }
+    writing = true; setStatus("保存中…");
+    try {
+      await S.db.doc("labels/" + S.uid).set({ claims: S.mine.claims, pairs: S.mine.pairs, updated: Date.now() });
+      setStatus("已保存");
+    } catch (e) {
+      if (e && e.code === "invalid_argument") { S.canWrite = false; $("readonly").hidden = false; setStatus("只读"); }
+      else setStatus("保存失败，稍后自动重试");
+      if (e && e.code !== "invalid_argument") setTimeout(save, 4000);
+    }
+    writing = false;
+    if (dirty) { dirty = false; save(); }
+  }
+  function setStatus(t) { $("status").textContent = t; }
+
+  function fig(src, cap, note) {
+    const f = document.createElement("figure");
+    const im = document.createElement("img"); im.src = src; im.alt = cap; im.loading = "eager";
+    im.addEventListener("click", () => { $("zoom-img").src = src; $("zoom").hidden = false; });
+    const c = document.createElement("figcaption");
+    const a = document.createElement("span"); a.textContent = cap; c.append(a);
+    if (note) { const b = document.createElement("span"); b.textContent = note; c.append(b); }
+    f.append(im, c); return f;
+  }
+
+  const doneClaims = it => { const a = S.mine.claims[it.id]; return !!a && it.claims.every((_, i) => a[i] === "y" || a[i] === "n"); };
+
+  function renderClaims() {
+    const list = order(S.items);
+    const n = list.length, done = list.filter(doneClaims).length;
+    $("c-count").textContent = `${done} / ${n} 题做完`;
+    $("c-meter").style.width = n ? (100 * done / n) + "%" : "0";
+    if (!n) return;
+    S.ci = Math.max(0, Math.min(S.ci, n - 1));
+    const it = list[S.ci];
+    $("c-id").textContent = `第 ${S.ci + 1} 题 · ${it.task_id}`;
+    $("c-prompt").textContent = it.prompt; $("c-prompt-zh").textContent = it.prompt_zh || "";
+    const imgs = $("c-imgs"); imgs.replaceChildren();
+    if (it.base) imgs.append(fig(it.base, "原图（修改前）"));
+    imgs.append(fig(it.img, it.base ? "修改后（要判断的图）" : "要判断的图", "点图放大"));
+    const ans = S.mine.claims[it.id] || [];
+    const ul = $("c-list"); ul.replaceChildren();
+    it.claims.forEach((c, i) => {
+      const li = document.createElement("li");
+      li.className = "claim" + (ans[i] === "y" ? " y" : ans[i] === "n" ? " n" : "");
+      if (i === S.sel) li.style.outline = "2px solid var(--accent)";
+      const k = document.createElement("span"); k.className = "k"; k.textContent = i + 1;
+      const t = document.createElement("span"); t.textContent = c.text;
+      const w = document.createElement("span"); w.className = "w"; w.textContent = "权重 " + c.weight; t.append(w);
+      const yn = document.createElement("span"); yn.className = "yn";
+      for (const [v, lab] of [["y", "是"], ["n", "否"]]) {
+        const b = document.createElement("button"); b.textContent = lab;
+        b.setAttribute("aria-label", `第 ${i + 1} 条：${lab}`);
+        if (ans[i] === v) b.className = "on-" + v;
+        b.disabled = !S.canWrite;
+        b.addEventListener("click", () => { S.sel = i; answer(it, i, v); });
+        yn.append(b);
+      }
+      li.append(k, t, yn); ul.append(li);
+    });
+    $("c-prev").disabled = S.ci === 0; $("c-next").disabled = S.ci === n - 1;
+  }
+  function answer(it, i, v) {
+    const a = (S.mine.claims[it.id] || it.claims.map(() => null)).slice();
+    a[i] = v; S.mine.claims = { ...S.mine.claims, [it.id]: a };
+    if (S.sel < it.claims.length - 1) S.sel = i + 1;
+    renderClaims(); save();
+  }
+
+  function renderPairs() {
+    const list = order(S.pairs);
+    const n = list.length, done = list.filter(p => S.mine.pairs[p.id]).length;
+    $("p-count").textContent = `${done} / ${n} 组做完`;
+    $("p-meter").style.width = n ? (100 * done / n) + "%" : "0";
+    if (!n) { $("p-imgs").replaceChildren(); return; }
+    S.pi = Math.max(0, Math.min(S.pi, n - 1));
+    const p = list[S.pi], f = flip(p);
+    $("p-id").textContent = `第 ${S.pi + 1} 组 · ${p.task_id}`;
+    $("p-prompt").textContent = p.prompt; $("p-prompt-zh").textContent = p.prompt_zh || "";
+    const imgs = $("p-imgs"); imgs.replaceChildren();
+    if (p.base) imgs.append(fig(p.base, "原图（修改前）"));
+    imgs.append(fig(f ? p.b_img : p.a_img, "左"), fig(f ? p.a_img : p.b_img, "右"));
+    const v = S.mine.pairs[p.id];   // 存的是 a / b / tie（和屏幕左右无关）
+    const left = f ? "b" : "a", right = f ? "a" : "b";
+    $("p-a").classList.toggle("sel", v === left); $("p-b").classList.toggle("sel", v === right); $("p-tie").classList.toggle("sel", v === "tie");
+    for (const id of ["p-a", "p-b", "p-tie"]) $(id).disabled = !S.canWrite;
+    $("p-prev").disabled = S.pi === 0; $("p-next").disabled = S.pi === n - 1;
+  }
+  function pick(side) {
+    const list = order(S.pairs); if (!list.length) return;
+    const p = list[S.pi], f = flip(p);
+    const v = side === "tie" ? "tie" : side === "left" ? (f ? "b" : "a") : (f ? "a" : "b");
+    S.mine.pairs = { ...S.mine.pairs, [p.id]: v };
+    if (S.pi < list.length - 1) S.pi++;
+    renderPairs(); save();
+  }
+
+  function render() {
+    for (const t of ["claims", "pairs", "guide"]) $("tab-" + t).setAttribute("aria-selected", String(S.tab === t));
+    $("guide").hidden = S.tab !== "guide";
+    const has = S.tab === "claims" ? S.items.length : S.tab === "pairs" ? S.pairs.length : 1;
+    $("empty").hidden = !!has;
+    $("claims-view").hidden = S.tab !== "claims" || !S.items.length;
+    $("pairs-view").hidden = S.tab !== "pairs" || !S.pairs.length;
+    if (S.tab === "claims") renderClaims(); else if (S.tab === "pairs") renderPairs();
+  }
+
+  for (const t of ["claims", "pairs", "guide"]) $("tab-" + t).addEventListener("click", () => {
+    S.tab = t; try { localStorage.setItem("c2p-tab", t) } catch (e) {} render();
+  });
+  $("c-prev").onclick = () => { S.ci--; S.sel = 0; renderClaims(); };
+  $("c-next").onclick = () => { S.ci++; S.sel = 0; renderClaims(); };
+  $("c-next-todo").onclick = () => {
+    const list = order(S.items); const n = list.length;
+    for (let k = 1; k <= n; k++) { const j = (S.ci + k) % n; if (!doneClaims(list[j])) { S.ci = j; S.sel = 0; break; } }
+    renderClaims();
+  };
+  $("p-prev").onclick = () => { S.pi--; renderPairs(); };
+  $("p-next").onclick = () => { S.pi++; renderPairs(); };
+  $("p-a").onclick = () => pick("left"); $("p-b").onclick = () => pick("right"); $("p-tie").onclick = () => pick("tie");
+  $("zoom").onclick = () => { $("zoom").hidden = true; };
+  document.addEventListener("keydown", e => {
+    if (e.target.closest && e.target.closest("input,textarea")) return;
+    if (e.key === "Escape") $("zoom").hidden = true;
+    if (S.tab === "claims" && S.items.length) {
+      const list = order(S.items), it = list[S.ci];
+      if (/^[1-9]$/.test(e.key) && +e.key <= it.claims.length) { S.sel = +e.key - 1; renderClaims(); }
+      else if ((e.key === "y" || e.key === "Y") && S.canWrite) answer(it, S.sel, "y");
+      else if ((e.key === "n" || e.key === "N") && S.canWrite) answer(it, S.sel, "n");
+      else if (e.key === "ArrowRight" && S.ci < list.length - 1) { S.ci++; S.sel = 0; renderClaims(); }
+      else if (e.key === "ArrowLeft" && S.ci > 0) { S.ci--; S.sel = 0; renderClaims(); }
+    } else if (S.tab === "pairs" && S.pairs.length && S.canWrite) {
+      const k = e.key.toLowerCase();
+      if (k === "a") pick("left"); else if (k === "d") pick("right"); else if (k === "s") pick("tie");
+    }
+  });
+
+  render();
+
+  (async () => {
+    const [db, user] = await Promise.all([window.claude?.use?.("db"), window.claude?.use?.("user")]);
+    if (!db || !user) { setStatus("未连接"); $("readonly").hidden = false; $("readonly").textContent = "请在 claude.ai 登录后打开这个页面，才能看到题目和保存答案。"; return; }
+    S.db = db;
+    S.uid = await user.id();
+    const cw = await user.can("data.write");
+    if (cw === false) { S.canWrite = false; $("readonly").hidden = false; }
+    setStatus("已连接");
+    db.collection("items").onSnapshot(s => { S.items = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); }, e => setStatus("读取题目失败：" + e.code));
+    db.collection("pairs").onSnapshot(s => { S.pairs = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); }, e => setStatus("读取比较失败：" + e.code));
+    try {
+      const mine = await db.doc("labels/" + S.uid).get();
+      if (mine.exists) { const d = mine.data(); S.mine = { claims: { ...(d.claims || {}) }, pairs: { ...(d.pairs || {}) } }; }
+      render();
+    } catch (e) { setStatus("读取你的答案失败：" + (e && e.code)); }
+  })();
+})();
+</script>

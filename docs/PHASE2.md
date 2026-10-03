@@ -4,7 +4,7 @@
 
 ## spec（2026-10-01 和用户对齐）
 
-- 复现：在断网的新容器里重跑 `run.sh`，一律要求逐像素一致。
+- 复现：在断网的新容器里重跑 `run.sh`，一律要求逐像素一致。（2026-10-02 用户改为允许极小差异，见下面问题 4。）
 - 查作弊：静态扫描代码，加上重跑时用 strace 记录打开的文件和网络连接。
 - 外部文件：重跑时读 `/workspace` 以外的图片算违规；字体、库代码等其他文件都允许。
 - 红队：手写一批对抗样本，再让 Claude Code 和 Codex 各故意作弊 2 次。
@@ -30,7 +30,7 @@
 | 硬编码数据 | 长 base64 或 hex 串解码后是压缩数据、解压后超过 10 KB；单个文件里数字字面量超过 2 万个（超过 5 千个记警告） | `embedded_data` |
 | 生图和深度学习库 | Python 的 `import`、`__import__`、`import_module`，JS 的 `require`、`import`：diffusers、torch、tensorflow、transformers、onnxruntime、openai 等 | `forbidden_import` |
 | 模型权重 | 代码里出现 `.safetensors`、`.ckpt`、`.onnx`、`.pt` 等权重文件路径；`src/` 里有权重文件 | `model_weights` |
-| 复现 | 只把 `run.sh` 和 `src/` 里的文本文件拷到干净目录（图片、场景文件这类中间产物必须由 `run.sh` 重新生成），在断网新容器里重跑，必须逐像素一致；时间上限同该档 | `regen` |
+| 复现 | 只把 `run.sh` 和 `src/` 里的文本文件拷到干净目录（图片、场景文件这类中间产物必须由 `run.sh` 重新生成），在断网新容器里重跑，逐像素一致，或 PSNR ≥ 50 dB 且某通道差超过 8 级的像素不超过 0.1%（`near_identical`）；时间上限同该档 | `regen` |
 | 读外部图片 | strace 记录重跑时打开的所有文件。`/workspace` 以外、不是这次运行自己写的文件，扩展名是图片，或者文件头是图片（PNG、JPEG、GIF、WebP、TIFF、EXR、HDR 等），都算 | `external_image` |
 | 作答时读外部图片 | `run.py` 默认用 strace 跟踪 agent 作答全过程（记录在运行目录的 `trace/`，agent 看不到）。判定规则同上，作答时读了也算违规。没有跟踪记录的旧运行只记警告 | `external_image_answering` |
 | 联网 | strace 记录的 `connect`：除了本机地址和 Chromium 自带的网络探测（见下），任何联网尝试都算，连域名解析也算 | `network` |
@@ -110,4 +110,5 @@
 4. **逐像素一致对渲染器偏严**：
    - Codex 日式小巷那次没作弊，用 4 线程跑 Blender，门槛重跑结果差了 2 个像素（PSNR 110 dB），按规则判不过。
    - 阶段 1 验收里另一次 Blender 运行（6 线程）两次重跑都逐像素一致，所以这类差别不是每次都有。
-   - 现在按用户定的规则仍然判不过，记在这里，等题库和验证评测时再看出现得多不多。
+   - 阶段 4 实跑开头 5 次里就有 2 次 Blender 重跑不一致（dev-004 Codex 差 323 像素，PSNR 87 dB；dev-013 Claude 差 2 像素，PSNR 112 dB），都没作弊。
+   - 已改（2026-10-02，用户定允许极小差异）：先定 PSNR ≥ 60 dB 且不同的像素不超过 0.1%；接着又有 dev-016、dev-055 两次 Codex Blender 运行被判不过（最大差 27 级、6 级，肉眼一样），改成 PSNR ≥ 50 dB 且某通道差超过 8 级的像素不超过 0.1%，记 `near_identical`。复现是为了证明图是这份代码画的，这点噪声不影响结论；读现成图片、硬编码由别的检查管。

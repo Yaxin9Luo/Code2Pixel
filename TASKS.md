@@ -98,3 +98,35 @@ spec（2026-10-02 和用户对齐）：
 - [x] TASK.md 模板改成英文（用户确认）
 - [x] docs/PHASE3.md、README
 - [x] PLAN、报告
+
+# 阶段 4：VLM 裁判
+
+spec（2026-10-02 和用户对齐）：
+- 裁判模型：用美团 Friday API（OpenAI 兼容接口），先试 GLM-5.3-FlashX；实测不能看图就在 Friday 里另挑多模态模型。再选一个不同厂家的多模态模型当第二裁判，算模型间一致率
+- AppId 由用户写进 ~/.code2pixel/friday_appid，不打印、不进仓库
+- 范围：逐条细则判分、两两比较 + Elo 框架（生图模型图等阶段 5）、读代码的 grader、judge 抗攻击测试
+- 验证用图：dev 分层抽 30 题（harness/tasks/judge_val.txt）× Claude Code、Codex，正常运行档，effort medium
+- 人工校准：用户和合作伙伴标，我做标注页面（Artifact + 共享数据库），汇总算一致率
+
+- [x] 抽 30 题（按类别分层，random.Random(4)）
+- [x] batch.sh 支持 TASKS_FILE
+- [x] 30 题 × 2 agent 实跑：60 次全部完成；Codex 中途订阅额度用完，作废 33 次空跑后补跑 17 题
+- [x] 门槛跑一遍这 60 次：60/60 通过（9 次 Blender 噪声按 near_identical 通过）
+- [x] 复现规则放宽（用户定）：PSNR ≥ 50 dB 且差超过 8 级的像素 ≤ 0.1%；红队 15/15 仍判不过
+- [x] Friday 接口实测：GLM-5.3-FlashX 能看图但 app 配额为 0（429）；用户定先用 Doubao-Seed-2.0-pro（主）+ gemini-3.1-pro-preview（第二），GLM 等配额申请下来再加
+- [x] harness/judge.py：逐条细则判是或否，加权得分；精确修改题同时给底稿图；按模型限速
+- [x] judge 稳定性：自洽 Doubao 100%、Gemini 98.3%；两裁判逐条一致 92.2%
+- [x] 两两比较 + Bradley–Terry / Elo 框架，位置平衡（harness/pairwise.py；合成数据验证 BT 能还原差距）
+- [x] 30 题 Claude vs Codex 两两比较：两个裁判结论相反（Doubao 偏 Claude 不显著，Gemini 偏 Codex 显著）
+- [x] 读代码的 grader（harness/code_grader.py）：红队 numbers_txt、zlib_pixels 判出硬编码，正常作品没误判
+- [x] grader 跑全部 60 次：没有硬编码；可改性 Claude 0.875、Codex 0.683
+- [x] judge 对抗样本脚本（harness/judge_redteam.py）：错配图、错配图 + 注入指令、只写题目文字；小样本 Doubao 通过
+- [x] judge 对抗样本全量跑（两个裁判）：错配 2/43（都确实成立），注入不增加，纯文字 0/43
+- [x] 标注页（harness/label/index.html，已发布为 Artifact）；label_export.py 导出图和文档，作者隐去
+- [x] 图全部上传到标注页（60 张、30 组比较）
+- [x] 修 edit_base 路径拼了两次的 bug（修改题判分、标注导出）
+- [ ] 等人工标注（目前 1 人、1 张图 + 8 组）
+- [x] 一致率汇总脚本（harness/agreement.py）
+- [ ] 细则太容易满分：和用户定改法（见 PHASE4 发现的问题 1）
+- [ ] GLM-5.3-FlashX 配额下来后加进来
+- [x] docs/PHASE4.md、PLAN、README、报告

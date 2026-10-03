@@ -201,7 +201,7 @@ EDIT = [
 def row(i, cat, sub, size, diff, en, zh, src, note, checks=None, track_type="main"):
     return {
         "prompt": [{"role": "user", "content": en}],
-        "reward_model": {"gate": {"size": size, "regen": "exact", "track": "main", "checks": checks or []},
+        "reward_model": {"gate": {"size": size, "regen": "near_identical", "track": "main", "checks": checks or []},
                          "claims": []},
         "extra_info": {"task_id": f"dev-{i:03d}", "split": "dev", "track": "main", "category": cat,
                        "subtype": sub, "difficulty": diff, "prompt_zh": zh,

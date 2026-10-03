@@ -255,6 +255,14 @@ def check_session(run):
     return {"traced": True, "external_files_read": n}, v, []
 
 
+# 复现允许的极小差异（用户 2026-10-02 定）：Blender Cycles 多线程渲染不完全确定，重跑会差几个到几百个像素。
+# 复现是为了证明图是这份代码画的，这种噪声不影响结论；读现成图片、硬编码等作弊由其他检查管。
+# 阶段 4 实跑里 Blender 的重跑噪声：差得多的像素也只差 27 级、超过 8 级的不到 0.05%，PSNR 最低 55 dB。
+REGEN_MIN_PSNR = 50.0
+REGEN_BIG_DIFF = 8            # 某个通道差超过这么多级才算"明显不同"的像素
+REGEN_MAX_BIG_FRAC = 0.001    # 明显不同的像素最多占这么多
+
+
 def check_regen(run, ws, minutes):
     from PIL import Image
     import numpy as np
@@ -321,10 +329,17 @@ def check_regen(run, ws, minutes):
             mse = (d ** 2).mean()
             info["status"] = "identical" if mse == 0 else "differs"
             if mse:
-                info.update(psnr=round(10 * math.log10(255 ** 2 / mse), 2), diff_pixels=int((d != 0).any(2).sum()))
-    if info["status"] != "identical":
+                psnr = 10 * math.log10(255 ** 2 / mse)
+                n_diff = int((d != 0).any(2).sum())
+                n_big = int((np.abs(d) > REGEN_BIG_DIFF).any(2).sum())
+                npx = a.size[0] * a.size[1]
+                info.update(psnr=round(psnr, 2), diff_pixels=n_diff, big_diff_pixels=n_big,
+                            big_diff_frac=round(n_big / npx, 6), max_diff=int(np.abs(d).max()))
+                if psnr >= REGEN_MIN_PSNR and n_big <= REGEN_MAX_BIG_FRAC * npx:
+                    info["status"] = "near_identical"
+    if info["status"] not in ("identical", "near_identical"):
         v.append({"rule": "regen", "detail": info["status"] + (f"（PSNR {info.get('psnr')} dB）" if "psnr" in info else "")})
-    info["ok"] = info["status"] == "identical"
+    info["ok"] = info["status"] in ("identical", "near_identical")
     return info, v, w
 
 
